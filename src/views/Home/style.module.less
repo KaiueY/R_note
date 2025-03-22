@@ -1,0 +1,254 @@
+.home {
+    min-height: calc(100vh - 50px); // 减去导航栏高度
+    background-color: #2a9ecf;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 50px);
+    position: relative; // 添加相对定位
+
+    // 添加简略信息栏样式
+    .summary_bar {
+        height: 50px;
+        background-color: #2a9ecf;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: opacity 0.3s ease;
+        width: 100%;
+        box-sizing: border-box;
+        position: absolute; // 改为绝对定位
+        top: 0;
+        left: 0;
+        z-index: 10;
+        // 初始状态完全透明且不可交互
+        opacity: 0;
+        pointer-events: none;
+        height: 0px;
+        // 当显示时才允许交互
+        &.visible {
+            height: auto;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .summary_stats {
+            display: flex;
+            gap: 20px;
+
+            .summary_spent, .summary_received {
+                display: flex;
+                align-items: center;
+                color: white;
+                font-size: 14px;
+
+                .amount {
+                    font-weight: bold;
+                    margin-left: 5px;
+                }
+            }
+        }
+
+        .summary_date {
+            display: flex;
+            align-items: center;
+            color: white;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 16px;
+            
+            span {
+                margin-right: 5px;
+                font-size: 14px;
+            }
+
+            svg {
+                width: 14px;
+                height: 14px;
+                color: white;
+            }
+        }
+    }
+
+    // 日期选择器容器
+    .date_picker_container {
+        padding: 16px;
+
+        .date_picker_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            
+            span {
+                font-weight: bold;
+                font-size: 18px;
+                color: #333;
+            }
+
+            svg {
+                cursor: pointer;
+                width: 20px;
+                height: 20px;
+            }
+        }
+    }
+
+    .home__header {
+        display: flex;
+        max-height: 45%;
+        background-color: #2a9ecf;
+        flex-direction: column;
+        box-sizing: border-box;
+        color: aliceblue;
+        text-align: center;
+        padding: 40px 20px 10px;
+        transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease;
+        transform-origin: top center;
+
+        &.hidden {
+            opacity: 0.1;
+            transform: scale(0.8);
+            height: 0;
+            overflow: hidden;
+            visibility: hidden;
+        }
+
+        .header__top {
+            display: flex;
+
+            .search {
+                // width: 20px;
+                border-radius: 5px;
+                padding: 6px;
+                background-color: #55b1d9;
+
+                svg {
+                    color: aliceblue;
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+
+            .bell {
+                // width: 20px;
+                border-radius: 5px;
+                padding: 6px;
+                background-color: #55b1d9;
+
+                svg {
+                    color: aliceblue;
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+
+            .user {
+                flex: 1;
+                display: flex;
+                color: aliceblue;
+                font-size: 16px;
+                margin: 0 20px;
+                background-color: #55b1d9;
+                border-radius: 6px;
+                padding: 2px auto;
+                align-items: center;
+                justify-content: center;
+
+            }
+        }
+
+        .header__main {
+            margin: 20px auto;
+
+            .balance {
+                font-size: 36px;
+                font-weight: bolder;
+                margin: 10px auto;
+
+            }
+
+            .header__stats {
+                background-color: #4aadd6;
+                width: 200px;
+                padding: 10px 24px;
+                border-radius: 10px;
+                display: flex;
+                justify-content: space-between;
+                font-weight: bolder;
+                font-size: 16px;
+                span{
+                    color: #acd9ec;
+                    font-size: 14px;
+                }
+                // .stats__spend {
+                //     .spent {
+                        
+                //     }
+                    
+                //     .stats__received{
+
+                //     }
+                // }
+
+            }
+
+        }
+        .header__foot{
+            color: #7bc2e0;
+        }
+    }
+
+    .home__body {
+        flex: 1;
+        background-color: #fff;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        overflow-y: auto;
+        position: relative;
+        z-index: 5;
+        transition: margin-top 0.3s ease, border-radius 0.3s ease, height 0.3s ease;
+
+        &.header-hidden {
+            margin-top: 0;
+            border-radius: 0;
+            height: calc(100% - 50px);
+        }
+        
+        // 当头部隐藏时的样式
+        &.header-hidden {
+            border-radius: 0;
+            height: 100%;
+            margin-top: 0;
+        }
+        
+        // 隐藏滚动条但保留功能
+        &::-webkit-scrollbar {
+            display: none;
+        }
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+
+        .row{
+            overflow-x: scroll;
+            scrollbar-width: none;
+            margin: 10px 20px;
+            display: flex;
+            flex-direction: row;
+            padding-top: 10px; // 为简略信息栏下方添加一些空间
+            
+            // 隐藏横向滚动条
+            &::-webkit-scrollbar {
+                display: none;
+            }
+        }
+        
+        .transactions{
+            padding: 0 20px;
+            padding-bottom: 50px; // 添加底部内边距确保最后的内容可见
+        }
+    }
+}
+

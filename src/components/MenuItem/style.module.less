@@ -1,0 +1,64 @@
+.item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    border-bottom: 1px solid #f5f5f5;
+    padding: 15px 20px;
+    
+    &:last-child {
+        border-bottom: none;
+    }
+    
+    .top {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .left {
+        display: flex;
+        align-items: center;
+        max-width: 70%;
+        
+        .iconPlaceholder {
+            margin-right: 10px;
+            svg {
+                width: 24px;
+                height: 24px;
+                color: #666;
+            }
+        }
+        
+        span {
+            font-size: 16px;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+    
+    .right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        min-width: 40px;
+        
+        svg {
+            width: 20px;
+            height: 20px;
+            color: #999;
+        }
+    }
+    
+    .bottom {
+        font-size: 12px;
+        color: #999;
+        margin-top: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}

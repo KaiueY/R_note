@@ -1,0 +1,227 @@
+.user {
+  min-height: calc(100vh - 50px); // 减去导航栏高度
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 50px);
+//   overflow-y: auto;
+  
+  .head {
+    height: 80px;
+    background-image: linear-gradient(217deg, #6fb9f8, #3daaf85e, #49d3fc1a, #3fd3ff00);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    
+    
+    &.expanded {
+      height: 220px;
+      transition: all 0.8s ease-in-out;
+    }
+    
+    .userInfo {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      height: 100%;
+      position: relative;
+      
+      .avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2),
+        inset 0 0 0 3px rgba(255, 255, 255, 0.4);
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+        transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        position: absolute;
+        top: 0;
+        left: 50%;
+        margin-left: -40px; // 水平居中 (宽度的一半)
+        
+        &.show {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+          transition-delay: 0.8s;
+        }
+        
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+      
+      .info {
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        
+        h2 {
+          color: #584444;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 180px;
+          margin: 0;
+          font-size: 20px;
+          font-weight: bold;
+          transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          
+          &.expanded {
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px); // 水平居中并向上移动
+            transition-delay: 0.8s;
+          }
+        }
+        
+        .userId {
+          color: #e93939;
+          font-size: 12px;
+          opacity: 0;
+          transform: translateY(10px);
+          transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          
+          &.show {
+            opacity: 0.7;
+            transform: translateY(0);
+            transition-delay: 0.8s;
+          }
+        }
+        
+        .signature {
+          font-size: 12px;
+        //   max-width: 220px;
+          opacity: 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 80%;
+          transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+          line-height: 1.5;
+          position: absolute;
+          bottom: -35px;
+          left:50%;
+          
+          &.show {
+            opacity: 1;
+            transform: translateY(-35px) translateX(-50%);
+            transition-delay: 0.8s;
+          }
+        }
+      }
+    }
+  }
+  
+  .content {
+    padding: 20px;
+    transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    
+    .card {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      /* 添加以下属性优化滚动 */
+      -webkit-overflow-scrolling: touch; /* 在iOS上启用惯性滚动 */
+      overscroll-behavior: contain; /* 防止滚动传播 */
+    }
+    
+  }
+  .themeText{
+    font-weight: bold;
+    margin-right: 10px;
+    white-space: nowrap;
+  }
+  
+  /* 弹窗标题样式 */
+  .popupTitle {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* 按钮组样式 */
+  .btnGroup {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  
+  .cancelBtn, .saveBtn {
+    flex: 1;
+    margin: 0 10px;
+    border-radius: 8px;
+    height: 40px;
+  }
+  
+  .saveBtn {
+    --background-color: #6fb9f8;
+  }
+  
+  /* 账户设置相关样式 */
+  .accountSettingsWrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+:global(.adm-switch){
+    --height: 24px;
+    --width: 40px;
+    --checked-color:pink;
+  }
+
+  :global(.antd-mobile-icon) {
+    font-size: 18px;
+    color: #999;
+  }
+
+// 添加媒体查询以适应不同屏幕高度
+@media screen and (max-height: 700px) {
+  .user {
+    .head.expanded {
+      height: 180px;
+    }
+    
+    .content .card .item {
+      padding: 12px 20px;
+    }
+  }
+}
+
+  

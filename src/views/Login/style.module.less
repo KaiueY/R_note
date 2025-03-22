@@ -1,0 +1,176 @@
+.auth {
+    min-height: 100vh;
+    background-image: linear-gradient(217deg, #6fb9f8, #3daaf85e, #49d3fc1a, #3fd3ff00);
+    .head {
+      height: 200px;
+      background: url(//s.yezgea02.com/1616032174786/cryptocurrency.png) no-repeat center;
+      background-size: 120%;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      img {
+        width: 34px;
+        margin: 15px 0 0 15px;
+      }
+    }
+    .tab{
+        color: #639f6b;
+        padding: 30px 24px 10px 36px;
+        position: relative;
+        
+        > span{
+            margin-left: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            position: relative;
+            transition: all 0.3s ease;
+            padding-bottom: 6px;
+            
+            &.active{
+                font-size: 24px;
+                position: relative;
+                transition: all 1s ease-in-out;
+
+                
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: -5px;
+                    left: 0;
+                    width: 48px;
+                    height: 6px;
+                    background-color: #639f6b;
+                    border-radius: 4px;
+                    transition: all 1s ease-in-out;
+
+                }
+            }
+        }
+    }
+    
+    .form {
+        --adm-color-background: #fbf6ff87;
+        padding: 0 50px;
+        background-color: transparent;
+        .adm-list-header {
+            height: 20px;
+        }
+        .formItem{
+            --padding-right:10px;
+            --font-size:16px;
+        }      
+        :global(.adm-input) {
+            --text-align:center
+        }
+        :global(.adm-list-item-content-main){
+            max-width: 80%;
+        }
+        :global(.adm-list-header) {
+            height: 20px;
+        }
+        :global(.adm-list-body) {
+            // --padding-left:0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .subButton{
+            --background-color:#b091d069;
+            --border-color:#b5b5b5;
+            --text-color:#c828a6;
+            width: 70px;
+            height: 70px;
+            display: block;
+            margin: 40px auto 0;
+            border-radius: 50%;
+            
+            .btnIcon {
+                font-size: 36px;
+                color: #639f6b;
+            }
+            
+            :global(.adm-button-loading-wrapper){
+                padding-left: 2px;
+                padding-right: 8px;
+                white-space: nowrap;
+            }
+        }
+        
+        /* 注册字段的动画样式 */
+        .registerFields {
+            overflow: hidden;
+            transition: all 1s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            
+            &.show {
+                max-height: 100px; /* 足够容纳内容的高度 */
+                opacity: 1;
+            }
+            
+            &.hide {
+                max-height: 0;
+                opacity: 0;
+            }
+        }
+        
+        /* 条款复选框的动画样式 */
+        .termsWrapper {
+            overflow: hidden;
+            transition: all 1s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            margin: 20px 0;
+            
+            &.show {
+
+                max-height: 50px; /* 足够容纳内容的高度 */
+                opacity: 1;
+            }
+            
+            &.hide {
+                max-height: 0;
+                opacity: 0;
+            }
+        }
+        
+        .termsCheckbox {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            --icon-size:22px
+        }
+        
+        .termsText {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .termsLink {
+            color: #639f6b;
+            text-decoration: none;
+            
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.subButton {
+    --background-color: #639f6b;
+    --border-color: #639f6b;
+    width: 120px;
+    height: 45px;
+    font-size: 16px;
+    font-weight: bold;
+    
+    &:disabled {
+        opacity: 0.8;
+    }
+    
+    :global(.adm-button-loading-wrapper) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
