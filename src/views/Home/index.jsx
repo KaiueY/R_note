@@ -3,7 +3,7 @@ import s from "./style.module.less";
 import CustomIcon from '@/components/CustomIcon';
 import Card from "./components/Card";
 import RecordItem from "./components/recordItem";
-import { Calendar, Popup, Tabs, Toast, DotLoading } from 'antd-mobile';
+import { Calendar, Popup, Tabs, Toast, DotLoading, FloatingBubble } from 'antd-mobile';
 import { useHeader } from './hooks/useHeader';
 import { useDatePicker } from './hooks/useDatePicker';
 import { useBillData } from './hooks/useBillData';
@@ -13,10 +13,9 @@ const Home = () => {
     headerRef,
     bodyRef,
     handleScroll,
-    headerOpacity,
-    headerScale,
-    summaryOpacity,
-    isHeaderVisible
+    headerState,
+    showBackToTop,
+    scrollToTop
   } = useHeader();
 
   const {
@@ -53,7 +52,7 @@ const Home = () => {
       {/* 头部区域 - 滚动时逐渐隐藏 */}
       <div 
         ref={headerRef}
-        className={`${s.home__header} ${!isHeaderVisible ? s.hidden : ''}`}
+        className={`${s.home__header} ${s[headerState]}`}
       >
         <div className={s.header__top}>
             <div className={s.search}>
@@ -89,20 +88,20 @@ const Home = () => {
       {/* 内容区域 - 可滚动 */}
       <div 
         ref={bodyRef}
-        className={`${s.home__body} ${!isHeaderVisible ? s['header-hidden'] : ''}`}
+        className={`${s.home__body} ${s[`body-${headerState}`]}`}
         onScroll={handleScroll}
       >
         {/* 简略信息栏 - 贴在 home__body 上方 */}
         <div 
-          className={`${s.summary_bar} ${!isHeaderVisible ? s.visible : ''}`}
+          className={`${s.summary_bar} ${s[`summary-${headerState}`]}`}
         >
           <div className={s.summary_stats}>
             <div className={s.summary_spent}>
-              <span>支出:</span>
+              <span>Spent:</span>
               <span className={s.amount}>${totalExpense.toFixed(2)}</span>
             </div>
             <div className={s.summary_received}>
-              <span>收入:</span>
+              <span>Received:</span>
               <span className={s.amount}>${totalIncome.toFixed(2)}</span>
             </div>
           </div>
@@ -144,6 +143,21 @@ const Home = () => {
             </div>
           )}
         </div>
+
+        {/* 回到顶部按钮 */}
+        {showBackToTop && (
+          <FloatingBubble
+            style={{
+              '--initial-position-bottom': '80px',
+              '--initial-position-right': '24px',
+              '--edge-distance': '24px',
+            }}
+            onClick={scrollToTop}
+            className={s.back_to_top}
+          >
+            <CustomIcon type="note-xiangshang" />
+          </FloatingBubble>
+        )}
       </div>
 
       {/* 日期选择器弹窗 */}

@@ -1,159 +1,49 @@
-// .item {
-//   background: #ffffff;
-//   padding: 10px 15px;
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   border-radius: 8px;
-//   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-//   margin-bottom: 10px;
-
-//   .left {
-//     display: flex;
-//     align-items: center;
-
-//     .icon {
-//       width: 40px;
-//       height: 40px;
-//       background-color: #f8d7da;
-//       border-radius: 20%;
-//       display: flex;
-//       justify-content: center;
-//       align-items: center;
-//       margin-right: 10px;
-//     }
-
-//     .text {
-//       display: flex;
-//       flex-direction: column;
-
-//       .source {
-//         font-size: 16px;
-//         font-weight: bold;
-//         color: #333;
-//       }
-
-//       .time {
-//         font-size: 12px;
-//         color: #888;
-//       }
-//     }
-//   }
-
-//   .right {
-//     font-size: 16px;
-//     font-weight: bold;
-//     color: #333;
-//   }
-// }
-
 .item {
   background: #ffffff;
-  padding: 15px;
+  padding: 10px 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 10px;
-  border-bottom: 1px solid #f5f5f5;
-  
-  &:last-child {
-    border-bottom: none;
-  }
 
   .left {
     display: flex;
     align-items: center;
-    width: 40px;
-    justify-content: center;
-    
+
     .icon {
-      width: 36px;
-      height: 36px;
-      background-color: #f0f0f0;
-      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      background-color: #f8d7da;
+      border-radius: 20%;
       display: flex;
       justify-content: center;
       align-items: center;
       margin-right: 10px;
-      
-      svg {
-        width: 20px;
-        height: 20px;
-        color: #2a9ecf;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+
+      .title {
+        font-size: 16px;
+        font-weight: bold;
+        // color: #333;
       }
-    }
-  }
-  
-  .center {
-    flex: 1;
-    padding: 0 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    
-    .type {
-      font-size: 16px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 5px;
-    }
-    
-    .remark {
-      font-size: 12px;
-      color: #888;
+
+      .time {
+        font-size: 12px;
+        color: #888;
+      }
     }
   }
 
   .right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: center;
-    
-    .amount {
-      font-size: 16px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 5px;
-    }
-    
-    .info {
-      display: flex;
-      align-items: center;
-      
-      .time {
-        font-size: 12px;
-        color: #888;
-        margin-right: 5px;
-      }
-      
-      .payType {
-        svg {
-          width: 14px;
-          height: 14px;
-          color: #999;
-        }
-      }
-    }
-    
-    .actions {
-      margin-top: 5px;
-      
-      .delete {
-        cursor: pointer;
-        
-        svg {
-          width: 16px;
-          height: 16px;
-          color: #ff6b6b;
-        }
-        
-        &:hover {
-          opacity: 0.8;
-        }
-      }
-    }
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
   }
 }
+

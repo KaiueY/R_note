@@ -1,7 +1,7 @@
 import React from "react";
 import s from './recordItem.module.less';
 import CustomIcon from '@/components/CustomIcon';
-
+import formatTime from "@/utils/formatTime";
 // 类型图标映射
 const typeIconMap = {
   food: 'note-food',
@@ -36,28 +36,11 @@ const RecordItem = ({ bill, onDelete }) => {
     type_id = 0
   } = bill || {};
 
-  // 格式化时间
-  const formatTime = (timestamp) => {
-    const date = new Date(Number(timestamp));
-    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-  };
+
 
   // 获取图标
   const getTypeIcon = (typeName) => {
     return typeIconMap[typeName] || typeIconMap.default;
-  };
-
-  // 获取支付方式图标
-  const getPayTypeIcon = (payType) => {
-    return payTypeIconMap[payType] || payTypeIconMap.default;
-  };
-
-  // 处理删除
-  const handleDelete = (e) => {
-    e.stopPropagation();
-    if (onDelete && id) {
-      onDelete(id);
-    }
   };
 
   return (
@@ -66,24 +49,13 @@ const RecordItem = ({ bill, onDelete }) => {
         <div className={s.icon}>
           <CustomIcon type={getTypeIcon(type_name)} />
         </div>
-      </div>
-      <div className={s.center}>
-        <div className={s.type}>{type_name}</div>
-        <div className={s.remark}>{remark}</div>
+        <div className={s.content}>
+          <div className={s.title}>{type_name}</div>
+          <div className={s.time}>{formatTime(date)}</div>
+        </div>
       </div>
       <div className={s.right}>
-        <div className={s.amount}>${amount}</div>
-        <div className={s.info}>
-          <span className={s.time}>{formatTime(date)}</span>
-          <span className={s.payType}>
-            <CustomIcon type={getPayTypeIcon(pay_type)} />
-          </span>
-        </div>
-        <div className={s.actions}>
-          <span className={s.delete} onClick={handleDelete}>
-            <CustomIcon type="note-delete" />
-          </span>
-        </div>
+        ${amount}
       </div>
     </div>
   );

@@ -4,7 +4,9 @@ export const useHeader = () => {
   const [scrollY, setScrollY] = useState(0);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [lastScrollTop, setLastScrollTop] = useState(0);
-  const [headerState, setHeaderState] = useState('visible'); // 新增：使用状态代替直接计算样式
+  const [headerState, setHeaderState] = useState('visible');
+  const [isScrollingUp, setIsScrollingUp] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
   const SCROLL_THRESHOLD = 50;
   
   const headerRef = useRef(null);
@@ -17,9 +19,24 @@ export const useHeader = () => {
     }
   }, []);
 
+  const scrollToTop = () => {
+    if (bodyRef.current) {
+      bodyRef.current.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   const handleScroll = (e) => {
     const scrollTop = e.target.scrollTop;
     const scrollDiff = scrollTop - lastScrollTop;
+    
+    // 更新滚动方向状态
+    setIsScrollingUp(scrollDiff < 0);
+    
+    // 控制回到顶部按钮显示
+    setShowBackToTop(scrollTop > 300);
     
     if (Math.abs(scrollDiff) > SCROLL_THRESHOLD) {
       if (scrollDiff > 0 && isHeaderVisible) {
@@ -43,21 +60,16 @@ export const useHeader = () => {
     }
   };
 
-  // 移除直接计算样式的代码
-  // const headerOpacity = isHeaderVisible ? Math.max(0, 1 - scrollY / (headerHeight.current / 1.5)) : 0;
-  // const headerScale = isHeaderVisible ? Math.max(0.8, 1 - scrollY / (headerHeight.current * 2)) : 0.8;
-  // const summaryOpacity = isHeaderVisible ? 0 : 1;
-
   return {
     scrollY,
-    isHeaderVisible,
     headerRef,
     bodyRef,
     headerHeight,
     handleScroll,
-    headerState, // 返回状态而不是具体样式值
-    // headerOpacity,
-    // headerScale,
-    // summaryOpacity
+    headerState,
+    isScrollingUp,
+    showBackToTop,
+    scrollToTop
   };
+
 };
