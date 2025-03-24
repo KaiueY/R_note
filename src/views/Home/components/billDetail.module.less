@@ -1,0 +1,62 @@
+.billDetail {
+  padding: 16px;
+
+  .header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    position: relative;
+
+    .closeButton {
+      position: absolute;
+      left: 0;
+      cursor: pointer;
+      padding: 8px;
+
+      :global(.adm-icon) {
+        font-size: 20px;
+      }
+    }
+
+    h2 {
+      flex: 1;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0;
+    }
+  }
+
+  .detailList {
+    :global(.adm-list-item) {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .label {
+      color: #666;
+      font-size: 14px;
+      min-width: 60px;
+    }
+
+    .amount {
+      font-size: 16px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .payType {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      :global(.adm-icon) {
+        font-size: 20px;
+      }
+
+      span {
+        color: #666;
+      }
+    }
+  }
+}

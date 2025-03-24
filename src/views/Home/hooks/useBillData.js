@@ -22,8 +22,18 @@ export const useBillData = (date) => {
         params: { year, month }
       });
       
+      // 检查响应状态
+      if (response.data.status !== 'success') {
+        throw new Error('获取数据失败');
+      }
+      
       // 处理返回的数据
-      const { list = [], totalIncome = 0, totalExpense = 0 } = response.data;
+      const billData = response.data.data[0] || {};
+      const { list = [], totalAmount = 0 } = billData;
+      
+      // 计算收入和支出
+      const totalIncome = list.reduce((sum, bill) => bill.isIncome ? sum + bill.amount : sum, 0);
+      const totalExpense = list.reduce((sum, bill) => !bill.isIncome ? sum + bill.amount : sum, 0);
       
       // 按日期分组处理数据
       const groupedData = groupByDate(list);

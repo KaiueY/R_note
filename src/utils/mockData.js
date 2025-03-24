@@ -10,12 +10,16 @@ const getRandomAmount = (min, max) => {
 
 // 账单类型
 const billTypes = [
-  { id: 1, name: '餐饮', icon: 'note-food' },
-  { id: 2, name: '购物', icon: 'note-shopping' },
-  { id: 3, name: '交通', icon: 'note-transport' },
-  { id: 4, name: '娱乐', icon: 'note-entertainment' },
-  { id: 5, name: '工资', icon: 'note-salary' },
-  { id: 6, name: '理财', icon: 'note-investment' }
+  { id: 1, name: 'Food', icon: 'note-food' },
+  { id: 2, name: 'Transport', icon: 'note-transport' },
+  { id: 3, name: 'Entertainment', icon: 'note-entertainment' },
+  { id: 4, name: 'Shopping', icon: 'note-shopping' },
+  { id: 5, name: 'Medical', icon: 'note-medical' },
+  { id: 6, name: 'Education', icon: 'note-education' },
+  { id: 7, name: 'Housing', icon: 'note-housing' },
+  { id: 8, name: 'Utilities', icon: 'note-utilities' },
+  { id: 9, name: 'Travel', icon: 'note-travel' },
+  { id: 10, name: 'Other', icon: 'note-bill' }
 ];
 
 // 生成随机账单数据
@@ -29,7 +33,7 @@ const generateBillData = (year, month) => {
   
   for (let i = 0; i < count; i++) {
     const type = billTypes[Math.floor(Math.random() * billTypes.length)];
-    const isIncome = type.id > 4; // 收入类型
+    const isIncome = false; // 所有类型都是支出
     
     bills.push({
       id: `bill-${year}${month}${i}`,
@@ -46,10 +50,23 @@ const generateBillData = (year, month) => {
   const totalIncome = bills.reduce((sum, bill) => bill.isIncome ? sum + bill.amount : sum, 0);
   const totalExpense = bills.reduce((sum, bill) => !bill.isIncome ? sum + bill.amount : sum, 0);
   
+  // 按类型统计金额
+  const categorySummary = billTypes.map(type => ({
+    type: type.name,
+    amount: bills
+      .filter(bill => bill.type === type.id)
+      .reduce((sum, bill) => sum + bill.amount, 0)
+  })).filter(category => category.amount > 0);
+
   return {
-    list: bills,
-    totalIncome,
-    totalExpense
+    status: "success",
+    data: [{
+      month: `${year}-${String(month).padStart(2, '0')}`,
+      totalAmount: totalIncome + totalExpense,
+      recordCount: bills.length,
+      categorySummary,
+      list: bills
+    }]
   };
 };
 
@@ -69,16 +86,20 @@ export const mockData = {
   },
   
   // 获取用户信息
-  '/userInfo': () => userInfo,
+  '/userInfo': () => ({
+    status: "success",
+    data: userInfo
+  }),
   
   // 添加账单
   '/api/bill/add': (data) => ({
-    success: true,
+    status: "success",
     data: { ...data, id: `bill-${Date.now()}` }
   }),
   
   // 删除账单
   '/api/bill/delete': (id) => ({
-    success: true
+    status: "success",
+    data: null
   })
 };

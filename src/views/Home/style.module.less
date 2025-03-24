@@ -1,110 +1,11 @@
 .home {
-    min-height: calc(100vh - 50px); // 减去导航栏高度
+    // 使用全局样式类
     background-color: #2a9ecf;
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 50px);
     position: relative; // 添加相对定位
-
-    // 添加简略信息栏样式
-    .summary_bar {
-        height: 50px;
-        background-color: #2a9ecf;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 20px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-        width: 100%;
-        box-sizing: border-box;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 10;
-        opacity: 0;
-        transform: translateY(-100%);
-
-        &.summary-visible {
-            opacity: 0;
-            transform: translateY(-100%);
-            pointer-events: none;
-        }
-
-        &.summary-fading {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-
-        &.summary-hidden {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-
-        .summary_stats {
-            display: flex;
-            gap: 20px;
-
-            .summary_spent, .summary_received {
-                display: flex;
-                align-items: center;
-                color: white;
-                font-size: 14px;
-
-                .amount {
-                    font-weight: bold;
-                    margin-left: 5px;
-                }
-            }
-        }
-
-        .summary_date {
-            display: flex;
-            align-items: center;
-            color: white;
-            cursor: pointer;
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 4px 10px;
-            border-radius: 16px;
-            
-            span {
-                margin-right: 5px;
-                font-size: 14px;
-            }
-
-            svg {
-                width: 14px;
-                height: 14px;
-                color: white;
-            }
-        }
-    }
-
-    // 日期选择器容器
-    .date_picker_container {
-        padding: 16px;
-
-        .date_picker_header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            
-            span {
-                font-weight: bold;
-                font-size: 18px;
-                color: #333;
-            }
-
-            svg {
-                cursor: pointer;
-                width: 20px;
-                height: 20px;
-            }
-        }
-    }
+    user-select: none;
+    height: calc(100vh - 50px); // 设置高度为视口高度减去导航栏高度
 
     .home__header {
         display: flex;
@@ -116,7 +17,7 @@
         text-align: center;
         padding: 40px 20px 10px;
         transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease;
-        transform-origin: top center;
+        transform-origin: bottom center;
 
         &.visible {
             opacity: 1;
@@ -229,32 +130,84 @@
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
         overflow-y: auto;
-        position: relative;
+   
         z-index: 5;
-        transition: margin-top 0.3s ease, border-radius 0.3s ease, height 0.3s ease;
+        height: calc(100vh - 200px);
+        min-height: 300px;
+        touch-action: pan-y; /* 允许垂直拖拽 */
+
+        // 拖动条
+        &::before {
+            content: '';
+            position: sticky;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 4px;
+            background-color: #e0e0e0;
+            border-radius: 2px;
+            cursor: ns-resize;
+            z-index: 100;
+            display: block;
+            touch-action: none; /* 防止触摸事件冲突 */
+            user-select: none; /* 防止选择文本 */
+        }
 
         // 回到顶部按钮
         .back_to_top {
             position: fixed;
             right: 24px;
             bottom: 80px;
-            z-index: 100;
+            z-index: 1000;
             background-color: #2a9ecf;
-            color: white;
             border-radius: 50%;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             transition: opacity 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            pointer-events: auto;
             
             &.hidden {
                 opacity: 0;
                 pointer-events: none;
             }
+
+            svg {
+                width: 24px;
+                height: 24px;
+                color: #fff;
+            }
         }
 
-        &.header-hidden {
-            margin-top: 0;
-            border-radius: 0;
-            height: calc(100% - 50px);
+        // 拖动条
+        &::before {
+            content: '';
+            position: sticky;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 4px;
+            background-color: #e0e0e0;
+            border-radius: 2px;
+            cursor: ns-resize;
+            z-index: 100;
+            display: block;
+            touch-action: none; /* 防止触摸事件冲突 */
+            user-select: none; /* 防止选择文本 */
+        }
+
+        /* 移除重复的header-hidden类定义，避免样式冲突 */
+        
+        &.expanded {
+            height: calc(100vh - 100px);
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            bottom: 0; /* 确保底部位置不变 */
         }
         
         // 当头部隐藏时的样式
@@ -262,14 +215,11 @@
             border-radius: 0;
             height: 100%;
             margin-top: 0;
+            bottom: 0; /* 确保底部位置不变 */
         }
         
         // 隐藏滚动条但保留功能
-        &::-webkit-scrollbar {
-            display: none;
-        }
-        scrollbar-width: none;
-        -ms-overflow-style: none;
+       
 
         .row{
             overflow-x: scroll;
@@ -278,6 +228,11 @@
             display: flex;
             flex-direction: row;
             padding-top: 10px; // 为简略信息栏下方添加一些空间
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #fff;
+            padding-bottom: 10px;
             
             // 隐藏横向滚动条
             &::-webkit-scrollbar {
@@ -287,8 +242,31 @@
         
         .transactions{
             padding: 0 20px;
-            padding-bottom: 50px; // 添加底部内边距确保最后的内容可见
+            // padding-bottom: 50px; // 添加底部内边距确保最后的内容可见
         }
     }
+        // 日期选择器容器
+        .date_picker_container {
+            padding: 16px;
+    
+            .date_picker_header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+                
+                span {
+                    font-weight: bold;
+                    font-size: 18px;
+                    color: #333;
+                }
+    
+                svg {
+                    cursor: pointer;
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+        }
 }
 

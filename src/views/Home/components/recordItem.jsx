@@ -1,16 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import s from './recordItem.module.less';
 import CustomIcon from '@/components/CustomIcon';
 import formatTime from "@/utils/formatTime";
+import { SwipeAction } from 'antd-mobile';
+import BillDetail from './BillDetail';
 // 类型图标映射
 const typeIconMap = {
-  food: 'note-food',
-  shopping: 'note-shopping',
-  transport: 'note-transport',
-  entertainment: 'note-entertainment',
-  medical: 'note-medical',
-  salary: 'note-salary',
-  transfer: 'note-transfer',
+  Food: 'note-food',
+  Transport: 'note-transport',
+  Entertainment: 'note-entertainment',
+  Shopping: 'note-shopping',
+  Medical: 'note-medical',
+  Education: 'note-education',
+  Housing: 'note-housing',
+  Utilities: 'note-utilities',
+  Travel: 'note-travel',
+  Other: 'note-bill',
   default: 'note-bill'
 };
 
@@ -25,6 +30,7 @@ const payTypeIconMap = {
 };
 
 const RecordItem = ({ bill, onDelete }) => {
+  const [showDetail, setShowDetail] = useState(false);
   // 使用默认值避免空值错误
   const {
     id,
@@ -32,32 +38,51 @@ const RecordItem = ({ bill, onDelete }) => {
     date = Date.now(),
     pay_type = 'cash',
     remark = '无备注',
-    type_name = 'default',
-    type_id = 0
+    typeName = 'default',
+    type = 0,
+    typeIcon = 'note-bill'
   } = bill || {};
 
 
 
   // 获取图标
-  const getTypeIcon = (typeName) => {
-    return typeIconMap[typeName] || typeIconMap.default;
+  const getTypeIcon = (icon) => {
+    return icon || typeIconMap.default;
   };
 
   return (
-    <div className={s.item}>
-      <div className={s.left}>
-        <div className={s.icon}>
-          <CustomIcon type={getTypeIcon(type_name)} />
+    <>
+      <SwipeAction
+        rightActions={[
+          {
+            key: 'delete',
+            text: '删除',
+            color: 'danger',
+            onClick: () => onDelete && onDelete(id)
+          }
+        ]}
+      >
+        <div className={s.item} onClick={() => setShowDetail(true)}>
+          <div className={s.left}>
+            <div className={s.icon}>
+              <CustomIcon type={getTypeIcon(typeIcon)} />
+            </div>
+            <div className={s.content}>
+              <div className={s.title}>{typeName}</div>
+              <div className={s.time}>{formatTime(date)}</div>
+            </div>
+          </div>
+          <div className={s.right}>
+            ${amount}
+          </div>
         </div>
-        <div className={s.content}>
-          <div className={s.title}>{type_name}</div>
-          <div className={s.time}>{formatTime(date)}</div>
-        </div>
-      </div>
-      <div className={s.right}>
-        ${amount}
-      </div>
-    </div>
+      </SwipeAction>
+      <BillDetail
+        visible={showDetail}
+        onClose={() => setShowDetail(false)}
+        bill={bill}
+      />
+    </>
   );
 };
 
