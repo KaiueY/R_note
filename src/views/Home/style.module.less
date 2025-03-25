@@ -1,6 +1,6 @@
 .home {
     // 使用全局样式类
-    background-color: #2a9ecf;
+    background-color: var(--secondary-color);
     display: flex;
     flex-direction: column;
     position: relative; // 添加相对定位
@@ -10,10 +10,10 @@
     .home__header {
         display: flex;
         max-height: 45%;
-        background-color: #2a9ecf;
+        background-color: var(--secondary-color);
         flex-direction: column;
         box-sizing: border-box;
-        color: aliceblue;
+        color: var(--text-color);
         text-align: center;
         padding: 40px 20px 10px;
         transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease;
@@ -46,10 +46,10 @@
                 // width: 20px;
                 border-radius: 5px;
                 padding: 6px;
-                background-color: #55b1d9;
+                background-color: var(--secondary-color);
 
                 svg {
-                    color: aliceblue;
+                    color: var(--text-color);
                     width: 20px;
                     height: 20px;
                 }
@@ -59,10 +59,10 @@
                 // width: 20px;
                 border-radius: 5px;
                 padding: 6px;
-                background-color: #55b1d9;
+                background-color: var(--secondary-color);
 
                 svg {
-                    color: aliceblue;
+                    color: var(--text-color);
                     width: 20px;
                     height: 20px;
                 }
@@ -71,10 +71,10 @@
             .user {
                 flex: 1;
                 display: flex;
-                color: aliceblue;
+                color: var(--text-color);
                 font-size: 16px;
                 margin: 0 20px;
-                background-color: #55b1d9;
+                background-color: var(--secondary-color);
                 border-radius: 6px;
                 padding: 2px auto;
                 align-items: center;
@@ -94,7 +94,7 @@
             }
 
             .header__stats {
-                background-color: #4aadd6;
+                background-color: var(--secondary-color-light);
                 width: 200px;
                 padding: 10px 24px;
                 border-radius: 10px;
@@ -103,7 +103,7 @@
                 font-weight: bolder;
                 font-size: 16px;
                 span{
-                    color: #acd9ec;
+                    color: var(--text-secondary);
                     font-size: 14px;
                 }
                 // .stats__spend {
@@ -120,13 +120,13 @@
 
         }
         .header__foot{
-            color: #7bc2e0;
+            color: var(--text-secondary);
         }
     }
 
     .home__body {
         flex: 1;
-        background-color: #fff;
+        background-color: var(--card-background);
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
         overflow-y: auto;
@@ -145,7 +145,7 @@
             transform: translateX(-50%);
             width: 40px;
             height: 4px;
-            background-color: #e0e0e0;
+            background-color: var(--border-color);
             border-radius: 2px;
             cursor: ns-resize;
             z-index: 100;
@@ -160,9 +160,9 @@
             right: 24px;
             bottom: 80px;
             z-index: 1000;
-            background-color: #2a9ecf;
+            background-color: var(--secondary-color);
             border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 2px 8px var(--shadow-color);
             transition: opacity 0.3s ease;
             display: flex;
             justify-content: center;
@@ -179,7 +179,7 @@
             svg {
                 width: 24px;
                 height: 24px;
-                color: #fff;
+                color: var(--text-color);
             }
         }
 
@@ -192,7 +192,7 @@
             transform: translateX(-50%);
             width: 40px;
             height: 4px;
-            background-color: #e0e0e0;
+            background-color: var(--border-color);
             border-radius: 2px;
             cursor: ns-resize;
             z-index: 100;
@@ -231,7 +231,7 @@
             position: sticky;
             top: 0;
             z-index: 10;
-            background-color: #fff;
+            background-color: var(--card-background);
             padding-bottom: 10px;
             
             // 隐藏横向滚动条
@@ -258,7 +258,7 @@
                 span {
                     font-weight: bold;
                     font-size: 18px;
-                    color: #333;
+                    color: var(--text-color);
                 }
     
                 svg {

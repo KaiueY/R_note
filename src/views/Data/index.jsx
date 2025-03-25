@@ -34,19 +34,15 @@ const Data = () => {
 
   return (
     <div className={s.data}>
-      {/* 顶部日期选择 */}
-      <DateHeader 
-        currentDate={currentDate} 
-        onDateClick={handleDateClick} 
-      />
 
       {/* 统计卡片 */}
       <OverviewCard 
         loading={loading} 
         totalExpense={totalExpense} 
         recordCount={recordCount} 
+        currentDate={currentDate} 
+        onDateClick={handleDateClick} 
       />
-
       {/* 图表类型选择 */}
       <Tabs 
         activeKey={activeTab} 

@@ -5,15 +5,17 @@ import s from './style.module.less';
 import { useNavigate } from 'react-router-dom';
 import AccountSettings from './components/AccountSettings';
 import EditProfile from './components/EditProfile';
+import { useTheme } from '@/context/ThemeContext';
 
 
 const User = () => {
   const [expanded, setExpanded] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [showAccountSettings, setShowAccountSettings] = useState(false);
   const [showEditProfile,setShowEditProfile] = useState(false)
   const headerRef = useRef(null);
   const navigate = useNavigate()
+  const { theme, toggleTheme } = useTheme();
+  const isDarkMode = theme === 'dark';
 
   // 切换展开/收起状态
   const toggleExpand = () => {
@@ -21,9 +23,8 @@ const User = () => {
   };
   
   // 切换主题
-  const toggleTheme = (checked) => {
-    setIsDarkMode(checked);
-    // 这里可以添加切换主题的逻辑
+  const handleThemeToggle = (checked) => {
+    toggleTheme();
     Toast.show(checked ? '已切换到深色模式' : '已切换到浅色模式');
   };
   
@@ -90,7 +91,7 @@ const User = () => {
           </span>
           <Switch
             checked={isDarkMode}
-            onChange={toggleTheme}
+            onChange={handleThemeToggle}
             className={s.themeSwitch}
           />
         </>

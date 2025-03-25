@@ -1,28 +1,36 @@
 import { useState, useEffect } from 'react';
 import axios from '@/utils/axios';
 
-export const useTrendData = (date) => {
+export const useTrendData = (startDate, endDate) => {
   const [loading, setLoading] = useState(true);
   const [trendData, setTrendData] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // 获取近6个月的数据
+    // 获取指定日期范围的数据
     const fetchTrendData = async () => {
       setLoading(true);
       try {
-        // 获取当前月份和前5个月的数据
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1;
+        // 计算开始日期和结束日期之间的月份差
+        const startYear = startDate.getFullYear();
+        const startMonth = startDate.getMonth() + 1;
+        const endYear = endDate.getFullYear();
+        const endMonth = endDate.getMonth() + 1;
+        
+        // 计算总月份数
+        const totalMonths = (endYear - startYear) * 12 + (endMonth - startMonth) + 1;
         
         const monthsData = [];
-        for (let i = 5; i >= 0; i--) {
-          let targetMonth = month - i;
-          let targetYear = year;
+        
+        // 遍历日期范围内的每个月份
+        for (let i = 0; i < totalMonths; i++) {
+          let targetMonth = startMonth + i;
+          let targetYear = startYear;
           
-          if (targetMonth <= 0) {
-            targetMonth += 12;
-            targetYear -= 1;
+          // 处理月份溢出
+          while (targetMonth > 12) {
+            targetMonth -= 12;
+            targetYear += 1;
           }
           
           const response = await axios.get('/api/bill', {
@@ -42,6 +50,11 @@ export const useTrendData = (date) => {
           }
         }
         
+        // 按时间顺序排序数据
+        monthsData.sort((a, b) => {
+          return new Date(a.month) - new Date(b.month);
+        });
+        
         setTrendData(monthsData);
       } catch (error) {
         console.error('获取趋势数据失败:', error);
@@ -52,7 +65,7 @@ export const useTrendData = (date) => {
     };
     
     fetchTrendData();
-  }, [date]);
+  }, [startDate, endDate]);
 
   // 生成趋势图配置
   const getTrendOption = () => {
@@ -83,7 +96,21 @@ export const useTrendData = (date) => {
         data: trendData.map(item => item.month)
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
+        // 动态计算刻度值间隔
+        axisLabel: {
+          formatter: (value) => {
+            return value.toFixed(2);
+          }
+        },
+        // 根据数据范围动态设置刻度间隔
+        splitNumber: 5,
+        // 确保从0开始
+        min: 0,
+        // 动态计算最大值，留出一定空间
+        max: function(value) {
+          return Math.ceil(value.max * 1.1);
+        }
       },
       series: [
         {
