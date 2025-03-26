@@ -3,12 +3,16 @@ import s from "./style.module.less";
 import CustomIcon from '@/components/CustomIcon';
 import Card from "./components/Card";
 import RecordItem from "./components/recordItem";
+import AddBillPopup from "./components/AddBillPopup";
 import { Calendar, Popup, Tabs, Toast, DotLoading, FloatingBubble } from 'antd-mobile';
 import { useHeader } from './hooks/useHeader';
 import { useDatePicker } from './hooks/useDatePicker';
 import { useBillData } from './hooks/useBillData';
 
 const Home = () => {
+  // 添加账单弹窗状态
+  const [addBillVisible, setAddBillVisible] = useState(false);
+  
   const [cards, setCards] = useState([
     { id: 1, amount: 123, title: "Food", address: "Restaurant", type: 1, typeIcon: "note-food" },
     { id: 2, amount: 45, title: "Transport", address: "Taxi", type: 2, typeIcon: "note-transport" },
@@ -158,7 +162,7 @@ const Home = () => {
         </div>
         <div className={s.header__main}>
             <div className={s.balance__current}>
-                <span>当前余额</span>
+                <span>Current Balance</span>
                 <div className={s.balance}>${(totalIncome - totalExpense).toFixed(2)}</div>
             </div>
           <div className={s.header__stats}>
@@ -230,6 +234,14 @@ const Home = () => {
             <CustomIcon type="note-xiangshang" />
           </FloatingBubble>
         )}
+        
+        {/* 添加账单按钮 */}
+        <FloatingBubble
+          onClick={() => setAddBillVisible(true)}
+          className={s.add_bill_button}
+        >
+          <CustomIcon type="note-add" />
+        </FloatingBubble>
       </div>
 
       {/* 日期选择器弹窗 */}
@@ -250,6 +262,16 @@ const Home = () => {
           }
         />
       </Popup>
+      
+      {/* 添加账单弹窗 */}
+      <AddBillPopup 
+        visible={addBillVisible} 
+        onClose={() => setAddBillVisible(false)} 
+        onSuccess={() => {
+          // 刷新账单数据
+          fetchBillData(currentDate);
+        }}
+      />
     </div>
   );
 };

@@ -2,30 +2,143 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Form, Input, Button, Checkbox, Toast } from "antd-mobile";
 import { EyeInvisibleOutline, EyeOutline } from "antd-mobile-icons";
 import CustomIcon from "@/components/CustomIcon";
+import { useNavigate } from 'react-router-dom';
+import userApi from '@/api/user';
 
 import cx from "classnames";
 import s from "./style.module.less";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [type, setType] = useState("login");
-  const [loading, setLoading] = useState(false); // 添加loading状态
+  const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [agreeTerms, setAgreeTerms] = useState(false); // 添加同意条款状态
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  
+  // 表单数据
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState("");
+  
+  // 表单错误信息
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   useEffect(() => {
-    document.title = "登录";
-  }, []);
+    document.title = type === "login" ? "登录" : "注册";
+  }, [type]);
 
+  // 验证表单
+  const validateForm = () => {
+    let isValid = true;
+    
+    // 重置错误信息
+    setUsernameError("");
+    setPasswordError("");
+    setConfirmPasswordError("");
+    
+    // 验证用户名
+    if (!username.trim()) {
+      setUsernameError("请输入用户名");
+      isValid = false;
+    } else if (username.length < 3 || username.length > 20) {
+      setUsernameError("用户名长度应为3-20个字符");
+      isValid = false;
+    }
+    
+    // 验证密码
+    if (!password) {
+      setPasswordError("请输入密码");
+      isValid = false;
+    } else if (password.length < 6) {
+      setPasswordError("密码长度不能少于6个字符");
+      isValid = false;
+    } else if (!/^(?=.*[a-z])(?=.*[A-Z]|.*[0-9]|.*[!@#$%^&*]).{6,}$/.test(password)) {
+      setPasswordError("密码需包含字母和数字或特殊字符");
+      isValid = false;
+    }
+    
+    // 注册时验证确认密码
+    if (type === "register") {
+      if (!confirmPassword) {
+        setConfirmPasswordError("请再次输入密码");
+        isValid = false;
+      } else if (password !== confirmPassword) {
+        setConfirmPasswordError("两次输入的密码不一致");
+        isValid = false;
+      }
+      
+      // 验证是否同意条款
+      if (!agreeTerms) {
+        Toast.show({
+          content: "请阅读并同意使用条款",
+          position: "center"
+        });
+        isValid = false;
+      }
+    }
+    
+    return isValid;
+  };
+  
   // 处理登录/注册按钮点击
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
+    
     setLoading(true);
-    // 这里添加登录/注册的逻辑
-    // 模拟请求延迟
-    setTimeout(() => {
+    
+    try {
+      if (type === "login") {
+        // 登录请求
+        const res = await userApi.login({ username, password });
+        
+        // 存储token
+        if (res.data && res.data.token) {
+          localStorage.setItem('token', res.data.token);
+          
+          // 如果返回了refreshToken，存储它
+          if (res.data.refreshToken) {
+            localStorage.setItem('refreshToken', res.data.refreshToken);
+          }
+          
+          // 存储用户信息
+          if (res.data.userInfo) {
+            localStorage.setItem('userInfo', JSON.stringify(res.data.userInfo));
+          }
+          
+          Toast.show({
+            content: "登录成功",
+            position: "center"
+          });
+          
+          // 跳转到首页
+          navigate('/');
+        }
+      } else {
+        // 注册请求
+        const res = await userApi.register({ username, password, email });
+        
+        Toast.show({
+          content: "注册成功，请登录",
+          position: "center"
+        });
+        
+        // 切换到登录页
+        setType("login");
+      }
+    } catch (error) {
+      // 处理错误
+      const errorMsg = error.response?.data?.message || error.message || "操作失败";
+      Toast.show({
+        content: errorMsg,
+        position: "center"
+      });
+    } finally {
       setLoading(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -53,11 +166,14 @@ const Login = () => {
               autoComplete="username"
               clearable
               disabled={loading}
-              onBlur={(e) => {
-                setUsername(e.target.value);
+              onChange={(val) => {
+                setUsername(val);
+                setUsernameError("");
               }}
               placeholder="请输入账号"
+              value={username}
             />
+            {usernameError && <div className={s.errorTip}>{usernameError}</div>}
           </Form.Item>
           <Form.Header> </Form.Header>
           <Form.Item
@@ -77,7 +193,13 @@ const Login = () => {
               type={visible ? "text" : "password"}
               disabled={loading}
               placeholder="请输入密码"
+              onChange={(val) => {
+                setPassword(val);
+                setPasswordError("");
+              }}
+              value={password}
             />
+            {passwordError && <div className={s.errorTip}>{passwordError}</div>}
           </Form.Item>
           <div
             className={cx(s.registerFields, {
@@ -90,10 +212,10 @@ const Login = () => {
               className={s.formItem}
               extra={
                 <div>
-                  {!visible ? (
-                    <EyeInvisibleOutline onClick={() => setVisible(true)} />
+                  {!confirmVisible ? (
+                    <EyeInvisibleOutline onClick={() => setConfirmVisible(true)} />
                   ) : (
-                    <EyeOutline onClick={() => setVisible(false)} />
+                    <EyeOutline onClick={() => setConfirmVisible(false)} />
                   )}
                 </div>
               }
@@ -101,8 +223,26 @@ const Login = () => {
               <Input
                 autoComplete="new-password"
                 disabled={loading}
-                type={visible ? "text" : "password"}
+                type={confirmVisible ? "text" : "password"}
                 placeholder="请再次输入密码"
+                onChange={(val) => {
+                  setConfirmPassword(val);
+                  setConfirmPasswordError("");
+                }}
+                value={confirmPassword}
+              />
+              {confirmPasswordError && <div className={s.errorTip}>{confirmPasswordError}</div>}
+            </Form.Item>
+            
+            <Form.Header> </Form.Header>
+            <Form.Item className={s.formItem}>
+              <Input
+                autoComplete="email"
+                clearable
+                disabled={loading}
+                onChange={(val) => setEmail(val)}
+                placeholder="请输入邮箱（选填）"
+                value={email}
               />
             </Form.Item>
           </div>

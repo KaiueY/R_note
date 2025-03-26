@@ -147,7 +147,7 @@ const AccountSettings = ({ onClose }) => {
                 <Input placeholder='请输入注册邮箱' />
               </Form.Item>
               <div className={s.resetTip}>
-                <CustomIcon type="note-tishi" />
+                <CustomIcon type="note-bell" />
                 <span>重置密码链接将发送到您的注册邮箱</span>
               </div>
             </Form>
