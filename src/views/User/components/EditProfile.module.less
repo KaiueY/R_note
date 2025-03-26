@@ -5,7 +5,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #fff;
+  background-color: var(--background-color);
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -53,6 +53,7 @@
 /* 模态框样式 */
 .modalContent {
   padding: 20px 15px;
+
 }
 
 .modalTitle {
@@ -76,11 +77,12 @@
 :global(.adm-modal-button) {
   font-size: 16px;
 }
-
+:global(.adm-center-popup){
+  --background-color: rgba(0, 0, 0, 0.6);
+}
 :global(.adm-form) {
   --border-top: none !important;
   --border-bottom: none !important;
-  --adm-color-border: transparent !important;
 }
 // 向上滑入动画
 @keyframes slideUp {
