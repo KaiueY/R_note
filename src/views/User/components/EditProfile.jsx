@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import s from "./EditProfile.module.less";
 import { NavBar, Input, Form, Avatar, Modal, Toast } from "antd-mobile";
 import MenuItem from "@/components/MenuItem";
-import { post } from "../../../utils";
 import cx from 'classnames'; // 添加 cx 导入
 
 const EditProfile = ({onClose}) => {

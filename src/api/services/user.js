@@ -1,15 +1,26 @@
-// 用户相关API接口
-import request from './index';
+// 用户API服务方法
+import request from '../request';
+import {
+  USER_REGISTER,
+  USER_LOGIN,
+  USER_INFO,
+  USER_UPDATE,
+  USER_SETTINGS,
+  USER_SETTINGS_UPDATE,
+  USER_STATS,
+  USER_LOGOUT,
+  USER_REFRESH_TOKEN
+} from '../paths/user';
 
-// 用户API接口
-const userApi = {
+// 用户API服务
+const userService = {
   /**
    * 用户注册
    * @param {object} data - 注册信息，包含username, password, email等字段
    * @returns {Promise} - 返回Promise对象
    */
   register: (data) => {
-    return request.post('/user/register', data);
+    return request.post(USER_REGISTER, data);
   },
 
   /**
@@ -18,7 +29,7 @@ const userApi = {
    * @returns {Promise} - 返回Promise对象
    */
   login: (data) => {
-    return request.post('/user/login', data);
+    return request.post(USER_LOGIN, data);
   },
 
   /**
@@ -26,7 +37,7 @@ const userApi = {
    * @returns {Promise} - 返回Promise对象
    */
   getUserInfo: () => {
-    return request.get('/user/info');
+    return request.get(USER_INFO);
   },
 
   /**
@@ -35,7 +46,7 @@ const userApi = {
    * @returns {Promise} - 返回Promise对象
    */
   updateUserInfo: (data) => {
-    return request.post('/user/update', data);
+    return request.post(USER_UPDATE, data);
   },
 
   /**
@@ -43,7 +54,7 @@ const userApi = {
    * @returns {Promise} - 返回Promise对象
    */
   getUserSettings: () => {
-    return request.get('/user/settings');
+    return request.get(USER_SETTINGS);
   },
 
   /**
@@ -52,7 +63,7 @@ const userApi = {
    * @returns {Promise} - 返回Promise对象
    */
   updateUserSettings: (data) => {
-    return request.post('/user/settings/update', data);
+    return request.post(USER_SETTINGS_UPDATE, data);
   },
 
   /**
@@ -60,7 +71,7 @@ const userApi = {
    * @returns {Promise} - 返回Promise对象
    */
   getUserStats: () => {
-    return request.get('/user/stats');
+    return request.get(USER_STATS);
   },
 
   /**
@@ -68,8 +79,17 @@ const userApi = {
    * @returns {Promise} - 返回Promise对象
    */
   logout: () => {
-    return request.post('/user/logout');
+    return request.post(USER_LOGOUT);
+  },
+
+  /**
+   * 刷新用户令牌
+   * @param {object} data - 包含refresh_token的对象
+   * @returns {Promise} - 返回Promise对象
+   */
+  refreshToken: (data) => {
+    return request.post(USER_REFRESH_TOKEN, data);
   }
 };
 
-export default userApi;
+export default userService;

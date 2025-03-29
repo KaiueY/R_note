@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Toast } from "antd-mobile";
+import tokenManager from "../tokenManager";
 
 // 创建一个新的axios实例用于刷新token，避免循环拦截
 const refreshAxios = axios.create({
@@ -16,11 +17,14 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 // 请求拦截器
 axios.interceptors.request.use(
   config => {
-    // 从localStorage获取token
-    const token = localStorage.getItem('token');
+    // 从tokenManager获取token
+    const token = tokenManager.getToken();
     // 如果存在token，则添加到请求头
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log('添加token到请求头:', `Bearer ${token}`);
+    } else {
+      console.log('未找到token，请求未携带Authorization头');
     }
     return config;
   },
@@ -31,28 +35,6 @@ axios.interceptors.request.use(
 let isRefreshing = false;
 // 等待刷新token的请求队列
 let requestsQueue = [];
-
-// 刷新token的函数
-const refreshToken = async () => {
-  try {
-    const refreshToken = localStorage.getItem('refreshToken');
-    if (!refreshToken) {
-      return Promise.reject(new Error('No refresh token'));
-    }
-    
-    const response = await refreshAxios.post('/user/refresh-token', { refreshToken });
-    const { data } = response;
-    
-    if (data && data.status === 'success' && data.data.accessToken) {
-      localStorage.setItem('token', data.data.accessToken);
-      return data.data.accessToken;
-    } else {
-      return Promise.reject(new Error('Failed to refresh token'));
-    }
-  } catch (error) {
-    return Promise.reject(error);
-  }
-};
 
 // 响应拦截器
 axios.interceptors.response.use(
@@ -97,8 +79,8 @@ axios.interceptors.response.use(
           isRefreshing = true;
           
           try {
-            // 刷新token
-            const newToken = await refreshToken();
+            // 使用tokenManager刷新token
+            const newToken = await tokenManager.refreshToken();
             
             // 更新当前请求的token
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
@@ -123,24 +105,16 @@ axios.interceptors.response.use(
             // 清空队列
             requestsQueue = [];
             
-            // 清除token并跳转到登录页
-            localStorage.removeItem('token');
-            localStorage.removeItem('refreshToken');
-            Toast.show('登录已过期，请重新登录');
-            
-            // 可以在这里添加重定向到登录页的逻辑
-            window.location.href = '/login';
+            // 使用tokenManager处理token过期
+            tokenManager.handleTokenExpired();
             
             return Promise.reject(refreshError);
           } finally {
             isRefreshing = false;
           }
         } else {
-          // 其他401错误
-          localStorage.removeItem('token');
-          localStorage.removeItem('refreshToken');
-          Toast.show('登录已过期，请重新登录');
-          // 可以在这里添加重定向到登录页的逻辑
+          // 其他401错误，使用tokenManager处理token过期
+          tokenManager.handleTokenExpired();
         }
       } else {
         Toast.show(error.response.data?.message || `请求失败(${error.response.status})`);

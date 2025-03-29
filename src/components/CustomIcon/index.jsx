@@ -3,7 +3,7 @@ import { createFromIconfontCN } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 
 const IconFont = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/c/font_4852017_fsjwu8ajvx.js',
+  scriptUrl: '//at.alicdn.com/t/c/font_4852017_cll5yh468r.js',
 });
 
 // 包装一层组件，添加类型检查和默认值

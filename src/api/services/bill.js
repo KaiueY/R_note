@@ -1,15 +1,22 @@
-// 账单相关API接口
-import request from './index';
+// 账单API服务方法
+import request from '../request';
+import {
+  BILL_LIST,
+  BILL_ADD,
+  BILL_DELETE,
+  BILL_UPDATE,
+  BILL_TYPES
+} from '../paths/bill';
 
-// 账单API接口
-const billApi = {
+// 账单API服务
+const billService = {
   /**
    * 获取账单数据
    * @param {object} params - 请求参数，包含year, month字段
    * @returns {Promise} - 返回Promise对象
    */
   getBill: (params) => {
-    return request.get('/bill', params);
+    return request.get(BILL_LIST, params);
   },
 
   /**
@@ -18,7 +25,7 @@ const billApi = {
    * @returns {Promise} - 返回Promise对象
    */
   addBill: (data) => {
-    return request.post('/bill/add', data);
+    return request.post(BILL_ADD, data);
   },
 
   /**
@@ -27,7 +34,7 @@ const billApi = {
    * @returns {Promise} - 返回Promise对象
    */
   deleteBill: (id) => {
-    return request.post('/bill/delete', { id });
+    return request.post(BILL_DELETE, { id });
   },
 
   /**
@@ -36,8 +43,16 @@ const billApi = {
    * @returns {Promise} - 返回Promise对象
    */
   updateBill: (data) => {
-    return request.post('/bill/update', data);
+    return request.post(BILL_UPDATE, data);
+  },
+
+  /**
+   * 获取账单类型
+   * @returns {Promise} - 返回Promise对象
+   */
+  getBillTypes: () => {
+    return request.get(BILL_TYPES);
   }
 };
 
-export default billApi;
+export default billService;

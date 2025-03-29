@@ -3,7 +3,7 @@ import Router from 'koa-router';
 import * as billController from '../controllers/bill.js';
 import { verifyToken } from '../middlewares/auth.js';
 
-const router = new Router({ prefix: '/api/bill' });
+const router = new Router({ prefix: '/bill' });
 
 // 所有账单路由都需要身份验证
 router.get('/', verifyToken, billController.getBills);

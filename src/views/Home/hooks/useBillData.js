@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from '@/utils/axios';
+import { billService } from '@/api/services';
 
 export const useBillData = (date) => {
   const [loading, setLoading] = useState(false);
@@ -18,17 +18,18 @@ export const useBillData = (date) => {
       const month = date.getMonth() + 1;
       
       // 调用接口获取数据
-      const response = await axios.get('/api/bill', {
-        params: { year, month }
-      });
+      // 使用billApi而不是直接使用axios
+      const response = await billService.getBill({ year, month });
+      console.log({ response});
+      console.log(response.data,);
       
       // 检查响应状态
-      if (response.data.status !== 'success') {
+      if (response.status !== 'success') {
         throw new Error('获取数据失败');
       }
       
       // 处理返回的数据
-      const billData = response.data.data[0] || {};
+      const billData = response.data[0] || {};
       const { list = [], totalAmount = 0 } = billData;
       
       // 计算收入和支出
@@ -77,7 +78,7 @@ export const useBillData = (date) => {
   const addBill = async (billData) => {
     setLoading(true);
     try {
-      const response = await axios.post('/api/bill', billData);
+      const response = await billService.addBill(billData);
       // 刷新数据
       fetchBillData(date);
       return response.data;
@@ -93,7 +94,7 @@ export const useBillData = (date) => {
   const deleteBill = async (id) => {
     setLoading(true);
     try {
-      await axios.delete(`/api/bill/${id}`);
+      await billService.deleteBill(id);
       // 刷新数据
       fetchBillData(date);
     } catch (err) {

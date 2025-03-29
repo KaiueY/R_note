@@ -45,21 +45,21 @@ export const register = async (ctx) => {
     // 生成Access Token
     const token = jwt.sign(
       { id: result.insertId, username },
-      process.env.JWT_SECRET || 'your_jwt_secret_key',
+      process.env.JWT_SECRET || 'kailin',
       { expiresIn: ACCESS_TOKEN_EXPIRES }
     );
     
     // 生成Refresh Token
     const refreshToken = jwt.sign(
       { id: result.insertId, username, type: 'refresh' },
-      process.env.JWT_REFRESH_SECRET || 'your_jwt_refresh_secret_key',
+      process.env.JWT_REFRESH_SECRET || 'carol',
       { expiresIn: REFRESH_TOKEN_EXPIRES }
     );
     
-    // 存储Refresh Token到数据库
+    // 存储Token到数据库
     await pool.query(
-      'INSERT INTO user_tokens (user_id, refresh_token, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY))',
-      [result.insertId, refreshToken]
+      'INSERT INTO user_tokens (user_id, access_token, refresh_token, expires_at) VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY))',
+      [result.insertId, token, refreshToken]
     );
     
     // 获取用户信息
@@ -105,23 +105,26 @@ export const login = async (ctx) => {
     }
     
     // 生成Access Token
+    const jwtSecret = process.env.JWT_SECRET || 'kailin';
+    console.log('生成token使用的密钥:', jwtSecret);
     const token = jwt.sign(
       { id: user.id, username: user.username },
-      process.env.JWT_SECRET || 'your_jwt_secret_key',
+      jwtSecret,
       { expiresIn: ACCESS_TOKEN_EXPIRES }
     );
+    console.log('生成的token:', token);
     
     // 生成Refresh Token
     const refreshToken = jwt.sign(
       { id: user.id, username: user.username, type: 'refresh' },
-      process.env.JWT_REFRESH_SECRET || 'your_jwt_refresh_secret_key',
+      process.env.JWT_REFRESH_SECRET || 'carol',
       { expiresIn: REFRESH_TOKEN_EXPIRES }
     );
     
-    // 存储Refresh Token到数据库
+    // 存储Token到数据库
     await pool.query(
-      'INSERT INTO user_tokens (user_id, refresh_token, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY))',
-      [user.id, refreshToken]
+      'INSERT INTO user_tokens (user_id, access_token, refresh_token, expires_at) VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY))',
+      [user.id, token, refreshToken]
     );
     
     // 返回用户信息（不包含密码）
@@ -159,7 +162,7 @@ export const refreshToken = async (ctx) => {
     // 验证Refresh Token
     const decoded = jwt.verify(
       refreshToken, 
-      process.env.JWT_REFRESH_SECRET || 'your_jwt_refresh_secret_key'
+      process.env.JWT_REFRESH_SECRET || 'carol'
     );
     
     // 确保是刷新令牌
@@ -180,7 +183,7 @@ export const refreshToken = async (ctx) => {
     // 生成新的Access Token
     const newAccessToken = jwt.sign(
       { id: decoded.id, username: decoded.username },
-      process.env.JWT_SECRET || 'your_jwt_secret_key',
+      process.env.JWT_SECRET || 'kailin',
       { expiresIn: ACCESS_TOKEN_EXPIRES }
     );
     
@@ -439,13 +442,13 @@ export const getUserStats = async (ctx) => {
     
     // 查询用户总支出
     const [expenseResult] = await pool.query(
-      'SELECT SUM(amount) as totalExpense FROM bills WHERE user_id = ? AND is_income = 0',
+      'SELECT SUM(b.amount) as totalExpense FROM bills b JOIN bill_types bt ON b.type_id = bt.id WHERE b.user_id = ? AND bt.is_income = 0',
       [userId]
     );
     
     // 查询用户总收入
     const [incomeResult] = await pool.query(
-      'SELECT SUM(amount) as totalIncome FROM bills WHERE user_id = ? AND is_income = 1',
+      'SELECT SUM(b.amount) as totalIncome FROM bills b JOIN bill_types bt ON b.type_id = bt.id WHERE b.user_id = ? AND bt.is_income = 1',
       [userId]
     );
     

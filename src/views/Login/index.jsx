@@ -2,14 +2,33 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Form, Input, Button, Checkbox, Toast } from "antd-mobile";
 import { EyeInvisibleOutline, EyeOutline } from "antd-mobile-icons";
 import CustomIcon from "@/components/CustomIcon";
-import { useNavigate } from 'react-router-dom';
-import userApi from '@/api/user';
+import { useNavigate, useLocation } from 'react-router-dom';
+import {userService} from '@/api/services'; 
+import tokenManager from "@/utils/tokenManager"; 
 
 import cx from "classnames";
 import s from "./style.module.less";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // 获取用户之前尝试访问的页面路径
+  // 优先从URL参数中获取redirect，其次从location.state中获取from
+  const getRedirectPath = () => {
+    // 从URL参数中获取redirect
+    const params = new URLSearchParams(location.search);
+    const redirectParam = params.get('redirect');
+    
+    if (redirectParam) {
+      return redirectParam;
+    }
+    
+    // 从location.state中获取from
+    return location.state?.from || '/';
+  };
+  
+  const redirectPath = getRedirectPath();
   const [type, setType] = useState("login");
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -93,33 +112,24 @@ const Login = () => {
     try {
       if (type === "login") {
         // 登录请求
-        const res = await userApi.login({ username, password });
+        const res = await userService.login({ username, password });
+        console.log("登录成功", res.data);
         
-        // 存储token
-        if (res.data && res.data.token) {
-          localStorage.setItem('token', res.data.token);
-          
-          // 如果返回了refreshToken，存储它
-          if (res.data.refreshToken) {
-            localStorage.setItem('refreshToken', res.data.refreshToken);
-          }
-          
-          // 存储用户信息
-          if (res.data.userInfo) {
-            localStorage.setItem('userInfo', JSON.stringify(res.data.userInfo));
-          }
+        // 使用tokenManager存储token和用户信息
+        if (res.data) {
+          tokenManager.saveTokens(res.data);
           
           Toast.show({
             content: "登录成功",
             position: "center"
           });
           
-          // 跳转到首页
-          navigate('/');
+          // 跳转到用户之前尝试访问的页面或首页
+          navigate(redirectPath);
         }
       } else {
         // 注册请求
-        const res = await userApi.register({ username, password, email });
+        const res = await userService.register({ username, password, email });
         
         Toast.show({
           content: "注册成功，请登录",

@@ -32,6 +32,9 @@ const Card = ({
     const deltaX = targetRect.left - cardRect.left;
     const deltaY = targetRect.top - cardRect.top;
 
+    // 等待0.5秒后执行动画，符合需求中的动画等待时间
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     // 执行动画
     await controls.start({
       x: deltaX,
@@ -43,20 +46,51 @@ const Card = ({
 
     // 创建账单数据
     const billData = {
-      id: `bill-${Date.now()}`,
-      type,
-      typeName: title,
-      typeIcon,
+      type_id: type, // 使用type作为type_id发送给后端
       amount,
-      date: Date.now(),
-      isIncome: false,
-      pay_type: 'credit',
-      remark: `Payment for ${title} in ${address}`
+      date: new Date().toISOString().split('T')[0], // 格式化日期为YYYY-MM-DD
+      is_income: false,
+      remark: `Payment for ${title} in ${address}`,
+      pay_type: 'credit'
     };
 
-    // 动画完成后回调，传递账单数据
-    onPaymentComplete && onPaymentComplete(billData);
-    onAnimationComplete && onAnimationComplete(id);
+    try {
+      // 发送支付请求到后端
+      const response = await fetch('/api/bill/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(billData)
+      });
+      
+      const result = await response.json();
+      
+      if (result.status === 'success') {
+        // 动画完成后回调，传递账单数据给Home组件
+        const newBill = {
+          id: result.data.id || `bill-${Date.now()}`,
+          type,
+          typeName: title,
+          typeIcon,
+          amount,
+          date: Date.now(),
+          isIncome: false,
+          pay_type: 'credit',
+          remark: billData.remark
+        };
+        
+        onPaymentComplete && onPaymentComplete(newBill);
+        onAnimationComplete && onAnimationComplete(id);
+      } else {
+        throw new Error(result.message || '支付失败');
+      }
+    } catch (error) {
+      console.error('支付失败:', error);
+      // 支付失败时恢复卡片
+      controls.start({ x: 0, y: 0, scale: 1, opacity: 1 });
+    }
   }
 
   return (

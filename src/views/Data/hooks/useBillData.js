@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from '@/utils/axios';
+import { billService } from '@/api/services';
 
 export const useBillData = (date) => {
   const [loading, setLoading] = useState(true);
@@ -13,9 +13,7 @@ export const useBillData = (date) => {
       const year = date.getFullYear();
       const month = date.getMonth() + 1;
       
-      const response = await axios.get('/api/bill', {
-        params: { year, month }
-      });
+      const response = await billService.getBill({ year, month });
       
       if (response.data.status === 'success') {
         setBillData(response.data.data[0] || {});

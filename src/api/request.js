@@ -1,4 +1,4 @@
-// API请求统一管理模块
+// API请求封装模块
 import axios from '../utils/axios';
 
 // 请求方法封装
@@ -42,18 +42,6 @@ const request = {
   delete: (url, params = {}) => {
     return axios.delete(url, { params });
   }
-};
-
-// 导入各模块API
-import userApi from './user';
-import billApi from './bill';
-import statisticsApi from './statistics';
-
-// 统一导出所有API
-export {
-  userApi,
-  billApi,
-  statisticsApi
 };
 
 export default request;

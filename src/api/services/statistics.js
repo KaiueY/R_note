@@ -1,15 +1,20 @@
-// 统计相关API接口
-import request from './index';
+// 统计API服务方法
+import request from '../request';
+import {
+  STATISTICS_LIST,
+  STATISTICS_TREND,
+  STATISTICS_TYPES
+} from '../paths/statistics';
 
-// 统计API接口
-const statisticsApi = {
+// 统计API服务
+const statisticsService = {
   /**
    * 获取统计数据
    * @param {object} params - 请求参数，包含year, month字段
    * @returns {Promise} - 返回Promise对象
    */
   getStatistics: (params) => {
-    return request.get('/statistics', params);
+    return request.get(STATISTICS_LIST, params);
   },
 
   /**
@@ -18,7 +23,7 @@ const statisticsApi = {
    * @returns {Promise} - 返回Promise对象
    */
   getTrend: (params) => {
-    return request.get('/statistics/trend', params);
+    return request.get(STATISTICS_TREND, params);
   },
 
   /**
@@ -27,8 +32,8 @@ const statisticsApi = {
    * @returns {Promise} - 返回Promise对象
    */
   getTypes: (params) => {
-    return request.get('/statistics/types', params);
+    return request.get(STATISTICS_TYPES, params);
   }
 };
 
-export default statisticsApi;
+export default statisticsService;

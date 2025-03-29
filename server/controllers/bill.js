@@ -21,14 +21,19 @@ export const getBills = async (ctx) => {
     
     // 查询账单数据
     const [bills] = await pool.query(
-      `SELECT b.id, b.amount, b.date, b.is_income as isIncome, b.remark, 
-       bt.name as typeName, bt.icon as typeIcon
+      `SELECT b.id, b.amount, b.date, bt.is_income as isIncome, b.remark, 
+       bt.name as typeName, bt.id as type
        FROM bills b
        LEFT JOIN bill_types bt ON b.type_id = bt.id
        WHERE b.user_id = ? AND b.date BETWEEN ? AND ?
        ORDER BY b.date DESC`,
       [userId, startDate, endDate]
     );
+    
+    // 为每个账单添加默认支付方式
+    bills.forEach(bill => {
+      bill.pay_type = bill.pay_type || 'credit';
+    });
     
     // 计算总收入和总支出
     const totalIncome = bills
@@ -57,30 +62,36 @@ export const getBills = async (ctx) => {
 export const addBill = async (ctx) => {
   try {
     const userId = ctx.state.user.id;
-    const { amount, typeId, date, isIncome, remark } = ctx.request.body;
+    const { amount, type_id, date, remark, pay_type } = ctx.request.body;
     
     // 参数验证
-    if (!amount || !typeId || !date) {
+    if (!amount || !type_id || !date) {
       throw formatError('金额、类型和日期不能为空', 400);
     }
     
     // 插入账单数据
     const [result] = await pool.query(
-      'INSERT INTO bills (user_id, type_id, amount, date, is_income, remark) VALUES (?, ?, ?, ?, ?, ?)',
-      [userId, typeId, amount, date, isIncome ? 1 : 0, remark || null]
+      'INSERT INTO bills (user_id, type_id, amount, date, remark) VALUES (?, ?, ?, ?, ?)',
+      [userId, type_id, amount, date, remark || null]
     );
     
     // 查询新添加的账单详情
     const [bills] = await pool.query(
-      `SELECT b.id, b.amount, b.date, b.is_income as isIncome, b.remark, 
-       bt.name as typeName, bt.icon as typeIcon
+      `SELECT b.id, b.amount, b.date, bt.is_income as isIncome, b.remark, 
+       bt.name as typeName, bt.id as type
        FROM bills b
        LEFT JOIN bill_types bt ON b.type_id = bt.id
        WHERE b.id = ?`,
       [result.insertId]
     );
     
-    ctx.body = formatResponse(bills[0] || {});
+    // 添加支付方式信息到返回数据
+    const billData = bills[0] || {};
+    if (billData) {
+      billData.pay_type = pay_type || 'credit';
+    }
+    
+    ctx.body = formatResponse(billData);
   } catch (error) {
     throw formatError(error.message, error.status || 500);
   }
@@ -128,10 +139,7 @@ export const updateBill = async (ctx) => {
       params.push(date);
     }
     
-    if (isIncome !== undefined) {
-      updateFields.push('is_income = ?');
-      params.push(isIncome ? 1 : 0);
-    }
+    // is_income字段已从bills表移除，不再需要更新
     
     if (remark !== undefined) {
       updateFields.push('remark = ?');
@@ -154,8 +162,8 @@ export const updateBill = async (ctx) => {
     
     // 查询更新后的账单详情
     const [updatedBills] = await pool.query(
-      `SELECT b.id, b.amount, b.date, b.is_income as isIncome, b.remark, 
-       bt.name as typeName, bt.icon as typeIcon
+      `SELECT b.id, b.amount, b.date, bt.is_income as isIncome, b.remark, 
+       bt.name as typeName
        FROM bills b
        LEFT JOIN bill_types bt ON b.type_id = bt.id
        WHERE b.id = ?`,
@@ -181,7 +189,7 @@ export const deleteBill = async (ctx) => {
       throw formatError('账单ID不能为空', 400);
     }
     
-    // 检查账单是否存在且属于当前用户
+    // 验证账单是否属于当前用户
     const [bills] = await pool.query(
       'SELECT * FROM bills WHERE id = ? AND user_id = ?',
       [id, userId]
@@ -191,13 +199,10 @@ export const deleteBill = async (ctx) => {
       throw formatError('账单不存在或无权限删除', 403);
     }
     
-    // 执行删除
-    await pool.query(
-      'DELETE FROM bills WHERE id = ? AND user_id = ?',
-      [id, userId]
-    );
+    // 删除账单
+    await pool.query('DELETE FROM bills WHERE id = ?', [id]);
     
-    ctx.body = formatResponse(null);
+    ctx.body = formatResponse({ id, message: '删除成功' });
   } catch (error) {
     throw formatError(error.message, error.status || 500);
   }

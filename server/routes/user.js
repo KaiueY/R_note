@@ -3,7 +3,7 @@ import Router from 'koa-router';
 import * as userController from '../controllers/user.js';
 import { verifyToken } from '../middlewares/auth.js';
 
-const router = new Router({ prefix: '/api/user' });
+const router = new Router({ prefix: '/user' });
 
 // 公开路由
 router.post('/register', userController.register);

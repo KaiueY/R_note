@@ -22,7 +22,15 @@ const router = new Router();
 
 // 配置中间件
 app.use(bodyParser());
-app.use(cors());
+app.use(cors(
+  {
+    origin: '*', // 允许所有域名跨域
+    credentials: true, // 允许携带cookie
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // 允许的请求方法
+    allowHeaders: ['Content-Type', 'Authorization', 'Accept'], // 允许的请求头
+    exposeHeaders:['Authorization']
+  }
+));
 console.log('process.env.DB_HOST:', process.env.DB_HOST);
 
 // 错误处理中间件
@@ -48,7 +56,7 @@ router.get('/', async (ctx) => {
 });
 
 // 测试路由
-router.get('/api/test', async (ctx) => {
+router.get('/test', async (ctx) => {
   ctx.body = {
     status: 'success',
     data: {

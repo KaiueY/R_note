@@ -42,6 +42,22 @@ const Home = () => {
       content: '支付成功',
     });
   };
+  
+  // 处理删除账单
+  const handleDeleteBill = async (id) => {
+    try {
+      await deleteBill(id);
+      Toast.show({
+        icon: 'success',
+        content: '删除成功',
+      });
+    } catch (error) {
+      Toast.show({
+        icon: 'fail',
+        content: '删除失败',
+      });
+    }
+  };
   const {
     headerRef,
     bodyRef,
@@ -130,7 +146,9 @@ const Home = () => {
     totalIncome,
     totalExpense,
     error,
-    addBill
+    addBill,
+    deleteBill,
+    fetchBillData
   } = useBillData(currentDate);
 
   // 显示错误提示
@@ -213,7 +231,11 @@ const Home = () => {
                   <div className={s.divider}></div>
                 </div>
                 {dayItem.bills.map(bill => (
-                  <RecordItem key={bill.id} bill={bill} />
+                  <RecordItem 
+                    key={bill.id} 
+                    bill={bill} 
+                    onDelete={handleDeleteBill} 
+                  />
                 ))}
               </div>
             ))

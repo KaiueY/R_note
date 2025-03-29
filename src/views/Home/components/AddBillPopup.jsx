@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Popup, Form, Input, Button, NumberKeyboard, Selector, DatePicker, Toast } from 'antd-mobile';
 import CustomIcon from '@/components/CustomIcon';
 import s from './AddBillPopup.module.less';
-import axios from '@/utils/axios';
+import { billService } from '@/api/services';
 
 const AddBillPopup = ({ visible, onClose, onSuccess }) => {
   const [form] = Form.useForm();
@@ -26,7 +26,7 @@ const AddBillPopup = ({ visible, onClose, onSuccess }) => {
   // 获取账单类型列表
   const fetchBillTypes = async () => {
     try {
-      const response = await axios.get('/api/bill/types');
+      const response = await billService.getBillTypes();
       if (response.data.status === 'success') {
         const types = response.data.data.map(type => ({
           label: (
@@ -58,11 +58,11 @@ const AddBillPopup = ({ visible, onClose, onSuccess }) => {
       const billData = {
         ...values,
         date: selectedDate.toISOString().split('T')[0],
-        isIncome: isIncome
+        type_id: values.typeId
       };
       
       // 发送请求
-      const response = await axios.post('/api/bill/add', billData);
+      const response = await billService.addBill(billData);
       
       if (response.data.status === 'success') {
         Toast.show({
