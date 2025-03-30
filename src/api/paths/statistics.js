@@ -1,6 +1,6 @@
 // 统计API路径常量
 
 // 统计模块API路径
-export const STATISTICS_LIST = '/statistics';
-export const STATISTICS_TREND = '/statistics/trend';
-export const STATISTICS_TYPES = '/statistics/types';
+export const statistics_list = '/statistics';
+export const statistics_trend = '/statistics/trend';
+export const statistics_types = '/statistics/types';

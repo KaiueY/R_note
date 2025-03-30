@@ -1,8 +1,8 @@
 // 账单API路径常量
 
 // 账单模块API路径
-export const BILL_LIST = '/bill';
-export const BILL_ADD = '/bill/add';
-export const BILL_DELETE = '/bill/delete';
-export const BILL_UPDATE = '/bill/update';
-export const BILL_TYPES = '/bill/types';
+export const bill_list = '/bill';
+export const bill_add = '/bill/add';
+export const bill_delete = '/bill/delete';
+export const bill_update = '/bill/update';
+export const bill_types = '/bill/types';

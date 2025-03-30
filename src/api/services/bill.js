@@ -1,11 +1,11 @@
 // 账单API服务方法
 import request from '../request';
 import {
-  BILL_LIST,
-  BILL_ADD,
-  BILL_DELETE,
-  BILL_UPDATE,
-  BILL_TYPES
+  bill_list,
+  bill_add,
+  bill_delete,
+  bill_update,
+  bill_types
 } from '../paths/bill';
 
 // 账单API服务
@@ -16,7 +16,7 @@ const billService = {
    * @returns {Promise} - 返回Promise对象
    */
   getBill: (params) => {
-    return request.get(BILL_LIST, params);
+    return request.get(bill_list, params);
   },
 
   /**
@@ -25,7 +25,7 @@ const billService = {
    * @returns {Promise} - 返回Promise对象
    */
   addBill: (data) => {
-    return request.post(BILL_ADD, data);
+    return request.post(bill_add, data);
   },
 
   /**
@@ -34,7 +34,7 @@ const billService = {
    * @returns {Promise} - 返回Promise对象
    */
   deleteBill: (id) => {
-    return request.post(BILL_DELETE, { id });
+    return request.post(bill_delete, { id });
   },
 
   /**
@@ -43,7 +43,7 @@ const billService = {
    * @returns {Promise} - 返回Promise对象
    */
   updateBill: (data) => {
-    return request.post(BILL_UPDATE, data);
+    return request.post(bill_update, data);
   },
 
   /**
@@ -51,7 +51,7 @@ const billService = {
    * @returns {Promise} - 返回Promise对象
    */
   getBillTypes: () => {
-    return request.get(BILL_TYPES);
+    return request.get(bill_types);
   }
 };
 

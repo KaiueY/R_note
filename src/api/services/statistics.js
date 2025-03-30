@@ -1,9 +1,9 @@
 // 统计API服务方法
 import request from '../request';
 import {
-  STATISTICS_LIST,
-  STATISTICS_TREND,
-  STATISTICS_TYPES
+  statistics_list,
+  statistics_trend,
+  statistics_types
 } from '../paths/statistics';
 
 // 统计API服务
@@ -14,7 +14,7 @@ const statisticsService = {
    * @returns {Promise} - 返回Promise对象
    */
   getStatistics: (params) => {
-    return request.get(STATISTICS_LIST, params);
+    return request.get(statistics_list, params);
   },
 
   /**
@@ -23,7 +23,7 @@ const statisticsService = {
    * @returns {Promise} - 返回Promise对象
    */
   getTrend: (params) => {
-    return request.get(STATISTICS_TREND, params);
+    return request.get(statistics_trend, params);
   },
 
   /**
@@ -32,7 +32,7 @@ const statisticsService = {
    * @returns {Promise} - 返回Promise对象
    */
   getTypes: (params) => {
-    return request.get(STATISTICS_TYPES, params);
+    return request.get(statistics_types, params);
   }
 };
 

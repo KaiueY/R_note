@@ -1,15 +1,15 @@
 // 用户API服务方法
 import request from '../request';
 import {
-  USER_REGISTER,
-  USER_LOGIN,
-  USER_INFO,
-  USER_UPDATE,
-  USER_SETTINGS,
-  USER_SETTINGS_UPDATE,
-  USER_STATS,
-  USER_LOGOUT,
-  USER_REFRESH_TOKEN
+  user_register,
+  user_login,
+  user_info,
+  user_update,
+  user_settings,
+  user_settings_update,
+  user_stats,
+  user_logout,
+  user_refresh_token
 } from '../paths/user';
 
 // 用户API服务
@@ -20,7 +20,7 @@ const userService = {
    * @returns {Promise} - 返回Promise对象
    */
   register: (data) => {
-    return request.post(USER_REGISTER, data);
+    return request.post(user_register, data);
   },
 
   /**
@@ -29,7 +29,7 @@ const userService = {
    * @returns {Promise} - 返回Promise对象
    */
   login: (data) => {
-    return request.post(USER_LOGIN, data);
+    return request.post(user_login, data);
   },
 
   /**
@@ -37,7 +37,7 @@ const userService = {
    * @returns {Promise} - 返回Promise对象
    */
   getUserInfo: () => {
-    return request.get(USER_INFO);
+    return request.get(user_info);
   },
 
   /**
@@ -46,7 +46,7 @@ const userService = {
    * @returns {Promise} - 返回Promise对象
    */
   updateUserInfo: (data) => {
-    return request.post(USER_UPDATE, data);
+    return request.post(user_update, data);
   },
 
   /**
@@ -54,7 +54,7 @@ const userService = {
    * @returns {Promise} - 返回Promise对象
    */
   getUserSettings: () => {
-    return request.get(USER_SETTINGS);
+    return request.get(user_settings);
   },
 
   /**
@@ -63,7 +63,7 @@ const userService = {
    * @returns {Promise} - 返回Promise对象
    */
   updateUserSettings: (data) => {
-    return request.post(USER_SETTINGS_UPDATE, data);
+    return request.post(user_settings_update, data);
   },
 
   /**
@@ -71,7 +71,7 @@ const userService = {
    * @returns {Promise} - 返回Promise对象
    */
   getUserStats: () => {
-    return request.get(USER_STATS);
+    return request.get(user_stats);
   },
 
   /**
@@ -79,7 +79,7 @@ const userService = {
    * @returns {Promise} - 返回Promise对象
    */
   logout: () => {
-    return request.post(USER_LOGOUT);
+    return request.post(user_logout);
   },
 
   /**
@@ -88,7 +88,7 @@ const userService = {
    * @returns {Promise} - 返回Promise对象
    */
   refreshToken: (data) => {
-    return request.post(USER_REFRESH_TOKEN, data);
+    return request.post(user_refresh_token, data);
   }
 };
 

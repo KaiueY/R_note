@@ -1,12 +1,12 @@
 // 用户API路径常量
 
 // 用户模块API路径
-export const USER_REGISTER = '/user/register';
-export const USER_LOGIN = '/user/login';
-export const USER_INFO = '/user/info';
-export const USER_UPDATE = '/user/update';
-export const USER_SETTINGS = '/user/settings';
-export const USER_SETTINGS_UPDATE = '/user/settings/update';
-export const USER_STATS = '/user/stats';
-export const USER_LOGOUT = '/user/logout';
-export const USER_REFRESH_TOKEN = '/user/refresh-token';
+export const user_register = '/user/register';
+export const user_login = '/user/login';
+export const user_info = '/user/info';
+export const user_update = '/user/update';
+export const user_settings = '/user/settings';
+export const user_settings_update = '/user/settings/update';
+export const user_stats = '/user/stats';
+export const user_logout = '/user/logout';
+export const user_refresh_token = '/user/refresh-token';
