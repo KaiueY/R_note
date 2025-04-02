@@ -5,13 +5,15 @@ import s from './style.module.less';
 import { useNavigate } from 'react-router-dom';
 import AccountSettings from './components/AccountSettings';
 import EditProfile from './components/EditProfile';
+import ExportData from './components/ExportData';
 import { useTheme } from '@/context/ThemeContext';
 
 
 const User = () => {
   const [expanded, setExpanded] = useState(false);
   const [showAccountSettings, setShowAccountSettings] = useState(false);
-  const [showEditProfile,setShowEditProfile] = useState(false)
+  const [showEditProfile,setShowEditProfile] = useState(false);
+  const [showExportData, setShowExportData] = useState(false)
   const headerRef = useRef(null);
   const navigate = useNavigate()
   const { theme, toggleTheme } = useTheme();
@@ -42,12 +44,22 @@ const User = () => {
     setShowEditProfile(true)
   }
   
+  // 打开导出数据
+  const openExportData = () => {
+    setShowExportData(true);
+  }
+  
   // 关闭账户设置
   const closeAccountSettings = () => {
     setShowAccountSettings(false);
   };
   const closeEditProfile = () => {
     setShowEditProfile(false);
+  };
+  
+  // 关闭导出数据
+  const closeExportData = () => {
+    setShowExportData(false);
   };
 
   // 确保内容区域高度适应视口
@@ -100,8 +112,9 @@ const User = () => {
     { 
       title: "导出账单", 
       itemIndex: "4",
-      description: "将账单数据导出为Excel或PDF格式",
-      iconType: "note-daochu1"
+      description: "将账单数据导出为Excel或CSV格式",
+      iconType: "note-daochu1",
+      onClick: openExportData
     },
     { 
       title: "使用反馈", 
@@ -162,6 +175,8 @@ const User = () => {
       {showEditProfile && <EditProfile onClose={closeEditProfile} />}
       {/* 账户设置组件 */}
       {showAccountSettings && <AccountSettings onClose={closeAccountSettings} />}
+      {/* 导出数据组件 */}
+      {showExportData && <ExportData onClose={closeExportData} />}
     </div>
   );
 };

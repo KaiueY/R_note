@@ -29,8 +29,12 @@
     }
   }
   
+  
   .dateSelector {
-    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    height: 32px;
+    padding: 0;
     color: #333;
   }
   
@@ -40,10 +44,43 @@
     align-items: center;
     justify-content: center;
     padding: 8px 0;
+    text-align: center;
     
     span {
       margin-top: 4px;
       font-size: 12px;
     }
+  }
+  
+  /* 类型选择器样式 */
+  .typeSelector {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    padding: 0;
+    color: #333;
+    
+    .typeIcon {
+      margin-right: 8px;
+      display: flex;
+      align-items: center;
+    }
+  }
+  
+  /* 添加类型标签居中样式 */
+  .typeFormItem {
+    :global(.adm-form-item-label) {
+      justify-content: flex-start !important;
+      padding-left: 0 !important;
+      width: 60px !important;
+    }
+  }
+  
+  .statusGroup {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    gap: 20px;
+    margin-top: 0;
   }
 }

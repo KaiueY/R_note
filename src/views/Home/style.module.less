@@ -246,9 +246,77 @@
             }
         }
         
-        .transactions{
+        .transactions {
             padding: 0 20px;
             // padding-bottom: 50px; // 添加底部内边距确保最后的内容可见
+            flex: 1;
+            overflow: hidden; // 改为hidden，让内部虚拟列表控制滚动
+            margin-top: 10px;
+            height: calc(100% - 20px); // 确保有足够的高度
+
+            // 虚拟列表样式
+            .billVirtualList {
+                height: 100%;
+                width: 100%;
+            }
+
+            .dateHeader {
+                display: flex;
+                align-items: center;
+                padding: 10px 0;
+                
+                .date {
+                    font-size: 14px;
+                    color: #666;
+                    font-weight: 500;
+                    margin-right: 10px;
+                }
+                
+                .divider {
+                    flex: 1;
+                    height: 1px;
+                    background-color: #eee;
+                }
+            }
+
+            .emptyState {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 40px 0;
+                color: #999;
+                
+                svg {
+                    font-size: 48px;
+                    margin-bottom: 10px;
+                    color: #ccc;
+                }
+                
+                p {
+                    font-size: 14px;
+                    margin: 0;
+                }
+            }
+
+            .loadingContainer {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px 0;
+                color: #666;
+                
+                span {
+                    margin-top: 10px;
+                    font-size: 14px;
+                }
+            }
+
+            // 日期分组样式
+            .dayGroup {
+                margin-bottom: 10px;
+            }
         }
     }
         // 日期选择器容器

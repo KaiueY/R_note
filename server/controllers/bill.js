@@ -8,26 +8,24 @@ import { formatResponse, formatError } from '../utils/index.js';
 export const getBills = async (ctx) => {
   try {
     const userId = ctx.state.user.id;
-    const { year, month } = ctx.query;
+    const { start_date, end_date } = ctx.query;
     
     // 参数验证
-    if (!year || !month) {
+    if (!start_date || !end_date) {
       throw formatError('年份和月份不能为空', 400);
     }
     
-    // 构建日期范围
-    const startDate = `${year}-${month.padStart(2, '0')}-01`;
-    const endDate = new Date(year, month, 0).toISOString().split('T')[0]; // 获取当月最后一天
+
     
     // 查询账单数据
     const [bills] = await pool.query(
       `SELECT b.id, b.amount, b.date, bt.is_income as isIncome, b.remark, 
-       bt.name as typeName, bt.id as type
+       bt.name as typeName, bt.id as type, b.status
        FROM bills b
        LEFT JOIN bill_types bt ON b.type_id = bt.id
        WHERE b.user_id = ? AND b.date BETWEEN ? AND ?
        ORDER BY b.date DESC`,
-      [userId, startDate, endDate]
+      [userId, start_date, end_date]
     );
     
     // 为每个账单添加默认支付方式
@@ -62,23 +60,23 @@ export const getBills = async (ctx) => {
 export const addBill = async (ctx) => {
   try {
     const userId = ctx.state.user.id;
-    const { amount, type_id, date, remark, pay_type } = ctx.request.body;
+    const { amount, type_id, date, remark, pay_type, status } = ctx.request.body;
     
     // 参数验证
     if (!amount || !type_id || !date) {
       throw formatError('金额、类型和日期不能为空', 400);
     }
     
-    // 插入账单数据
+    // 插入账单数据，添加status字段
     const [result] = await pool.query(
-      'INSERT INTO bills (user_id, type_id, amount, date, remark) VALUES (?, ?, ?, ?, ?)',
-      [userId, type_id, amount, date, remark || null]
+      'INSERT INTO bills (user_id, type_id, amount, date, remark, status) VALUES (?, ?, ?, ?, ?, ?)',
+      [userId, type_id, amount, date, remark || null, status || 'paid']
     );
     
     // 查询新添加的账单详情
     const [bills] = await pool.query(
       `SELECT b.id, b.amount, b.date, bt.is_income as isIncome, b.remark, 
-       bt.name as typeName, bt.id as type
+       bt.name as typeName, bt.id as type, b.status
        FROM bills b
        LEFT JOIN bill_types bt ON b.type_id = bt.id
        WHERE b.id = ?`,
@@ -218,6 +216,103 @@ export const getBillTypes = async (ctx) => {
     
     ctx.body = formatResponse(types);
   } catch (error) {
+    throw formatError(error.message, error.status || 500);
+  }
+};
+
+/**
+ * 获取卡片数据
+ * 卡片数据包括用户最近使用的账单类型、常用支付方式和待支付账单
+ */
+export const getCards = async (ctx) => {
+  try {
+    const userId = ctx.state.user.id;
+    
+    // 查询用户最近使用的账单类型（最多5个）
+    const [recentTypes] = await pool.query(
+      `SELECT bt.id, bt.name, bt.is_income as isIncome, COUNT(*) as count, 
+       MAX(b.date) as last_used, SUM(b.amount) as total_amount
+       FROM bills b
+       JOIN bill_types bt ON b.type_id = bt.id
+       WHERE b.user_id = ?
+       GROUP BY bt.id, bt.name, bt.is_income
+       ORDER BY last_used DESC, count DESC
+       LIMIT 5`,
+      [userId]
+    );
+    
+    // 查询用户常用支付方式（最多3个）
+    const [paymentMethods] = await pool.query(
+      `SELECT pm.id, pm.name, COUNT(*) as count
+       FROM bills b
+       JOIN payment_methods pm ON b.payment_method_id = pm.id
+       WHERE b.user_id = ?
+       GROUP BY pm.id, pm.name
+       ORDER BY count DESC
+       LIMIT 3`,
+      [userId]
+    );
+    
+    // 查询用户待支付账单（最多5个）
+    const [pendingBills] = await pool.query(
+      `SELECT b.id, b.amount, b.date, bt.name as typeName, bt.id as type_id, 
+       bt.is_income as isIncome, b.remark, pp.due_date, pp.priority,
+       pm.id as payment_method_id, pm.name as payment_method_name
+       FROM bills b
+       JOIN pending_payments pp ON b.id = pp.bill_id
+       JOIN bill_types bt ON b.type_id = bt.id
+       LEFT JOIN payment_methods pm ON b.payment_method_id = pm.id
+       WHERE b.user_id = ? AND b.status = 'pending'
+       ORDER BY pp.due_date ASC, pp.priority DESC
+       LIMIT 5`,
+      [userId]
+    );
+    
+    // 构建卡片数据
+    const cards = recentTypes.map(type => ({
+      id: `card-type-${type.id}`,
+      type: type.id,
+      typeName: type.name,
+      isIncome: Boolean(type.isIncome),
+      count: type.count,
+      totalAmount: parseFloat(type.total_amount),
+      lastUsed: type.last_used,
+      cardType: 'bill_type'
+    }));
+    
+    // 添加支付方式卡片
+    paymentMethods.forEach(method => {
+      cards.push({
+        id: `card-payment-${method.id}`,
+        paymentId: method.id,
+        paymentName: method.name,
+        count: method.count,
+        cardType: 'payment_method'
+      });
+    });
+    
+    // 添加待支付账单卡片
+    pendingBills.forEach(bill => {
+      cards.push({
+        id: `card-pending-${bill.id}`,
+        billId: bill.id,
+        amount: parseFloat(bill.amount),
+        date: bill.date,
+        dueDate: bill.due_date,
+        priority: bill.priority,
+        type: bill.type_id,
+        typeName: bill.typeName,
+        isIncome: Boolean(bill.isIncome),
+        remark: bill.remark,
+        paymentId: bill.payment_method_id,
+        paymentName: bill.payment_method_name,
+        cardType: 'pending_bill'
+      });
+    });
+    
+    ctx.body = formatResponse(cards);
+  } catch (error) {
+    console.error('获取卡片数据失败:', error);
     throw formatError(error.message, error.status || 500);
   }
 };

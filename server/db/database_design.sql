@@ -159,6 +159,36 @@ END //
 
 DELIMITER ;
 
+-- 初始化账单类型数据
+INSERT INTO `bill_types` (`name`, `is_income`, `sort`) VALUES
+-- 支出类型
+('餐饮', 0, 1),
+('交通', 0, 2),
+('购物', 0, 3),
+('娱乐', 0, 4),
+('医疗', 0, 5),
+('住房', 0, 6),
+('教育', 0, 7),
+('其他', 0, 99),
+-- 收入类型
+('工资', 1, 1),
+('奖金', 1, 2),
+('投资', 1, 3),
+('其他收入', 1, 99);
+
+-- 初始化支付方式数据
+INSERT INTO `payment_methods` (`name`) VALUES
+('cash'),
+('credit'),
+('debit'),
+('alipay'),
+('wechat');
+
+-- 创建默认用户（用于测试）
+INSERT INTO `users` (`username`, `password`, `email`) VALUES
+('demo', '$2a$10$RJ9Ht0YXNlC.hD1bG2DQi.Ry.9Kkp2nZCRjM4ND7BF9Tl76QKNlGe', 'demo@example.com');
+-- 注意：密码是"password"的哈希值，仅用于测试环境
+
 -- 用户令牌表
 CREATE TABLE IF NOT EXISTS `user_tokens` (
   `id` INT NOT NULL AUTO_INCREMENT,

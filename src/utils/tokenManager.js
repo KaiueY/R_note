@@ -1,6 +1,7 @@
 // Token管理工具
 import axios from 'axios';
 import { Toast } from 'antd-mobile';
+import Cookies from 'js-cookie';
 
 // 创建一个新的axios实例用于刷新token，避免循环拦截
 const refreshAxios = axios.create({
@@ -13,6 +14,17 @@ const TOKEN_KEY = 'token';
 const REFRESH_TOKEN_KEY = 'refreshToken';
 const USER_INFO_KEY = 'userInfo';
 
+// Cookie配置
+const COOKIE_OPTIONS = {
+  path: '/',       // 在所有路径下可用
+  secure: process.env.NODE_ENV === 'production', // 在生产环境中只通过HTTPS发送
+  sameSite: 'strict' // 防止CSRF攻击
+};
+
+// Token过期时间（天）
+const TOKEN_EXPIRES = 1;           // 访问令牌1天过期
+const REFRESH_TOKEN_EXPIRES = 7;   // 刷新令牌7天过期
+
 // Token管理工具
 const tokenManager = {
   /**
@@ -21,14 +33,21 @@ const tokenManager = {
    */
   saveTokens: (data) => {
     if (data.token) {
-      localStorage.setItem(TOKEN_KEY, data.token);
+      Cookies.set(TOKEN_KEY, data.token, {
+        ...COOKIE_OPTIONS,
+        expires: TOKEN_EXPIRES
+      });
     }
     
     if (data.refreshToken) {
-      localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
+      Cookies.set(REFRESH_TOKEN_KEY, data.refreshToken, {
+        ...COOKIE_OPTIONS,
+        expires: REFRESH_TOKEN_EXPIRES
+      });
     }
     
     if (data.userInfo) {
+      // 用户信息仍然存储在localStorage中，因为它可能较大
       localStorage.setItem(USER_INFO_KEY, JSON.stringify(data.userInfo));
     }
   },
@@ -38,7 +57,7 @@ const tokenManager = {
    * @returns {string|null} - 返回token或null
    */
   getToken: () => {
-    return localStorage.getItem(TOKEN_KEY);
+    return Cookies.get(TOKEN_KEY) || null;
   },
   
   /**
@@ -46,7 +65,7 @@ const tokenManager = {
    * @returns {string|null} - 返回refreshToken或null
    */
   getRefreshToken: () => {
-    return localStorage.getItem(REFRESH_TOKEN_KEY);
+    return Cookies.get(REFRESH_TOKEN_KEY) || null;
   },
   
   /**
@@ -62,8 +81,8 @@ const tokenManager = {
    * 清除所有token和用户信息
    */
   clearTokens: () => {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    Cookies.remove(TOKEN_KEY, { path: '/' });
+    Cookies.remove(REFRESH_TOKEN_KEY, { path: '/' });
     localStorage.removeItem(USER_INFO_KEY);
   },
   
@@ -85,7 +104,10 @@ const tokenManager = {
         // 兼容后端返回的token字段名可能是accessToken或token
         const newToken = data.data.accessToken || data.data.token;
         if (newToken) {
-          localStorage.setItem(TOKEN_KEY, newToken);
+          Cookies.set(TOKEN_KEY, newToken, {
+            ...COOKIE_OPTIONS,
+            expires: TOKEN_EXPIRES
+          });
           return newToken;
         }
       }

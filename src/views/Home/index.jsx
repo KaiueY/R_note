@@ -4,22 +4,16 @@ import CustomIcon from '@/components/CustomIcon';
 import Card from "./components/Card";
 import RecordItem from "./components/recordItem";
 import AddBillPopup from "./components/AddBillPopup";
+import BillVirtualListExample from "./components/BillVirtualListExample";
 import { Calendar, Popup, Tabs, Toast, DotLoading, FloatingBubble } from 'antd-mobile';
 import { useHeader } from './hooks/useHeader';
 import { useDatePicker } from './hooks/useDatePicker';
 import { useBillData } from './hooks/useBillData';
+import { useCardData } from './hooks/useCardData';
 
 const Home = () => {
   // 添加账单弹窗状态
   const [addBillVisible, setAddBillVisible] = useState(false);
-  
-  const [cards, setCards] = useState([
-    { id: 1, amount: 123, title: "Food", address: "Restaurant", type: 1, typeIcon: "note-food" },
-    { id: 2, amount: 45, title: "Transport", address: "Taxi", type: 2, typeIcon: "note-transport" },
-    { id: 3, amount: 89, title: "Shopping", address: "Mall", type: 4, typeIcon: "note-shopping" },
-    { id: 4, amount: 150, title: "Medical", address: "Hospital", type: 5, typeIcon: "note-medical" },
-    { id: 5, amount: 200, title: "Housing", address: "Rent", type: 7, typeIcon: "note-housing" }
-  ]);
   
   // 拖拽相关状态
   const [isDragging, setIsDragging] = useState(false);
@@ -28,19 +22,30 @@ const Home = () => {
   const [expandedView, setExpandedView] = useState(false);
   const dragHandleRef = useRef(null);
 
+  // 使用卡片数据钩子
+  const {
+    loading: cardsLoading,
+    cards,
+    error: cardsError,
+    removeCard
+  } = useCardData();
+
   const handleCardAnimationComplete = (cardId) => {
     // 移除已完成动画的卡片
-    setCards(prevCards => prevCards.filter(card => card.id !== cardId));
+    removeCard(cardId);
   };
   
   const handlePaymentComplete = (billData) => {
-    // 添加新账单
-    addBill(billData);
+    // 不再调用addBill，因为billService.processCardPayment已经发送了请求
+    // addBill(billData);
     // 显示支付成功提示
     Toast.show({
       icon: 'success',
       content: '支付成功',
     });
+    
+    // 直接刷新账单数据
+    fetchBillData(currentDate);
   };
   
   // 处理删除账单
@@ -152,12 +157,21 @@ const Home = () => {
   } = useBillData(currentDate);
 
   // 显示错误提示
-  if (error) {
-    Toast.show({
-      icon: 'fail',
-      content: error,
-    });
-  }
+  useEffect(() => {
+    if (error) {
+      Toast.show({
+        icon: 'fail',
+        content: error,
+      });
+    }
+    
+    if (cardsError) {
+      Toast.show({
+        icon: 'fail',
+        content: cardsError,
+      });
+    }
+  }, [error, cardsError]);
 
   return (
     <div className={s.home}>
@@ -216,35 +230,14 @@ const Home = () => {
           ))}
         </div>
 
-        {/* 交易记录列表 */}
+        {/* 交易记录列表 - 使用虚拟列表优化性能 */}
         <div className={s.transactions}>
-          {loading ? (
-            <div className={s.loadingContainer}>
-              <DotLoading color='primary' />
-              <span>加载中...</span>
-            </div>
-          ) : billList.length > 0 ? (
-            billList.map((dayItem, dayIndex) => (
-              <div key={dayIndex} className={s.dayGroup}>
-                <div className={s.dateHeader}>
-                  <div className={s.date}>{dayItem.date}</div>
-                  <div className={s.divider}></div>
-                </div>
-                {dayItem.bills.map(bill => (
-                  <RecordItem 
-                    key={bill.id} 
-                    bill={bill} 
-                    onDelete={handleDeleteBill} 
-                  />
-                ))}
-              </div>
-            ))
-          ) : (
-            <div className={s.emptyState}>
-              <CustomIcon type="note-empty" />
-              <p>暂无交易记录</p>
-            </div>
-          )}
+          <BillVirtualListExample
+            loading={loading}
+            billList={billList}
+            onDeleteBill={handleDeleteBill}
+            style={{ height: '100%' }}
+          />
         </div>
 
         {/* 回到顶部按钮 */}

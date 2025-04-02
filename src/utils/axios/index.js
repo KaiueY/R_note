@@ -2,11 +2,6 @@ import axios from "axios";
 import { Toast } from "antd-mobile";
 import tokenManager from "../tokenManager";
 
-// 创建一个新的axios实例用于刷新token，避免循环拦截
-const refreshAxios = axios.create({
-  baseURL: '/api',
-  timeout: 10000
-});
 
 // 基础配置
 axios.defaults.baseURL = '/api';
@@ -17,14 +12,13 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 // 请求拦截器
 axios.interceptors.request.use(
   config => {
-    // 从tokenManager获取token
-    const token = tokenManager.getToken();
-    // 如果存在token，则添加到请求头
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-      console.log('添加token到请求头:', `Bearer ${token}`);
+    // 由于token现在存储在cookie中，并且已设置withCredentials=true
+    // 浏览器会自动将cookie附加到请求中，不需要手动添加到请求头
+    // 只需记录日志用于调试
+    if (tokenManager.getToken()) {
+      console.log('Token存在于cookie中，将自动发送');
     } else {
-      console.log('未找到token，请求未携带Authorization头');
+      console.log('未找到token，请求可能未授权');
     }
     return config;
   },
@@ -82,12 +76,9 @@ axios.interceptors.response.use(
             // 使用tokenManager刷新token
             const newToken = await tokenManager.refreshToken();
             
-            // 更新当前请求的token
-            originalRequest.headers.Authorization = `Bearer ${newToken}`;
-            
+            // 由于token现在存储在cookie中，不需要手动添加到请求头
             // 处理队列中的请求
             requestsQueue.forEach(({ resolve, config }) => {
-              config.headers.Authorization = `Bearer ${newToken}`;
               resolve(axios(config));
             });
             

@@ -5,10 +5,12 @@ import request from '../request';
 import userService from './user';
 import billService from './bill';
 import statisticsService from './statistics';
+import exportService from './export';
 
 // 统一导出所有API服务
 export {
   userService,
   billService,
-  statisticsService
+  statisticsService,
+  exportService
 };
